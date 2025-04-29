@@ -1,10 +1,13 @@
 
-
+import Dashboard from "./pages/Dashboard"
 function App() {
 
   return (
     <>
-    <div className="text-7xl">Hello Team</div>
+    
+    <Dashboard />
+    
+   
     </>
   )
 }
