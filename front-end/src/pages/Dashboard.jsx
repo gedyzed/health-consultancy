@@ -1,10 +1,12 @@
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import SummaryCards from '../components/SummaryCards';
-import AppointmentsTable from '../components/AppointmentsTable';
-import CommentsSection from '../components/CommentsSection';
 import { IoIosNotifications } from "react-icons/io";
-import ChatBotButton from '../components/ChatBotButton';
+import Navbar from '../components/layout/NavBar';
+import Footer from '../components/layout/Footer';
+
+import SummaryCards from '../components/cards/SummaryCards';
+import AppointmentsTable from '../components/appointments/AppointmentTable';
+import CommentsSection from '../components/comments/CommentsSection';
+import ChatBotButton from '../components/chat/ChatBotButton';
+
 import logo from '../assets/logo.svg';
 
 const Dashboard = () => {
@@ -14,7 +16,7 @@ const Dashboard = () => {
       {/* Header Section */}
       <header className="flex flex-col sm:flex-row justify-between items-center mt-4 px-4 sm:px-8 gap-4">
         <div className="flex items-center gap-4">
-          <img src={logo} alt="Health Consultancy Logo" className="h-12 w-auto " />
+          <img src={logo} alt="Health Consultancy Logo" className="h-12 w-auto" />
         </div>
 
         <div className="flex items-center space-x-4">
@@ -50,7 +52,7 @@ const Dashboard = () => {
         {/* Summary Cards */}
         <SummaryCards />
 
-        {/* Appointments and Comments */}
+        {/* Appointments and Comments Section */}
         <div className="flex flex-col lg:flex-row gap-6 mt-8">
           <div className="flex-1 space-y-6">
             <AppointmentsTable title="Upcoming Appointment" />

@@ -1,4 +1,4 @@
-import CommentCard from "./commentCard"
+import CommentCard from "../cards/commentCard"
 
 export default function CommentsSection(){
     const comments =[

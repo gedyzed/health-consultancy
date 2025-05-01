@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import appointmentReducer from './features/appointmentBooking/appointmentSlice';
+import appointmentReducer from '../features/appointmentBooking/appointmentSlice';
 
- const store = configureStore({
+export const store = configureStore({
   reducer: {
-    appointment: appointmentReducer,
-  },
+    appointment: appointmentReducer
+    // Add other reducers here if needed
+  }
 });
-export default store;
