@@ -7,9 +7,24 @@ import AppointmentsTable from '../components/appointments/AppointmentTable';
 import CommentsSection from '../components/comments/CommentsSection';
 import ChatBotButton from '../components/chat/ChatBotButton';
 
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchAppointments } from '../features/appointmentBooking/appointmentSlice';
+
 import logo from '../assets/logo.svg';
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  
+  useEffect(() => {
+    // Fetch appointments when the component mounts
+    dispatch(fetchAppointments());
+
+
+  
+
+  }, [dispatch]);
+
   return (
     <div className="font-serif min-h-screen bg-white text-gray-800 flex flex-col justify-between">
       
