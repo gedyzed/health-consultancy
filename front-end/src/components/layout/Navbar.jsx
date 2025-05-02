@@ -1,29 +1,33 @@
 import { FaSearch } from "react-icons/fa";
 
-
-
-export default function  Navbar  () {
-    return (
-      <div className="navbar bg-[#2A6F97] text-white px-6 ml-6 rounded-box ">
-     <div className ="flex items-center  gap-4">
-        <div className="flex gap-4">
+const Navbar = ({ showSearch = true }) => {
+  return (
+    <nav className="navbar bg-[#2A6F97] text-white px-4 md:px-6 ml-2 md:ml-6 rounded-box">
+      <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-4">
+        {/* Navigation Links */}
+        <div className="flex flex-wrap justify-around gap-4 md:gap-20 flex-grow">
           <a className="btn btn-ghost text-white font">Dashboard</a>
           <a className="btn btn-ghost text-white">Patient List</a>
           <a className="btn btn-ghost text-white">Calendar</a>
           <a className="btn btn-ghost text-white">Help</a>
         </div>
-        
-      </div>
-      {/*make the search icon inside the search input to the left of the search bar */}
-        <div className=" relative block flex items-center  ml-auto">
-            <input type="text"  className="input text-white rounded-xl w-64 h-8 mr-10" />
-            <div  className=" absolute inset-y-0 left-0 flex items-center pl-2  ml-1">
-            <FaSearch className ="text-gray-900 text-2xl" />
-            </div>
-      
 
+        {/* Responsive Search */}
+        {showSearch && (
+          <div className="relative w-full md:w-64 mt-2 md:mt-0">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="input pl-10 text-black rounded-xl w-full h-10 bg-[#f5f6f7] placeholder-gray-500"
+            />
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <FaSearch className="text-gray-800 text-md" />
+            </div>
+          </div>
+        )}
       </div>
-      </div>
-    );
-  };
-  
+    </nav>
+  );
+};
+
+export default Navbar;

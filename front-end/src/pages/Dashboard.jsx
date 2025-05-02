@@ -1,52 +1,33 @@
-import { IoIosNotifications } from "react-icons/io";
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import Navbar from '../components/layout/NavBar';
 import Footer from '../components/layout/Footer';
-
 import SummaryCards from '../components/cards/SummaryCards';
 import AppointmentsTable from '../components/appointments/AppointmentTable';
 import CommentsSection from '../components/comments/CommentsSection';
 import ChatBotButton from '../components/chat/ChatBotButton';
+import ChatWindow from '../components/chat/ChatWindow';
+import MainHeader from '../components/layout/MainHeader';
 
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { fetchAppointments } from '../features/appointmentBooking/appointmentSlice';
-
-import logo from '../assets/logo.svg';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   useEffect(() => {
-    // Fetch appointments when the component mounts
     dispatch(fetchAppointments());
-
-
-  
-
   }, [dispatch]);
 
   return (
     <div className="font-serif min-h-screen bg-white text-gray-800 flex flex-col justify-between">
       
       {/* Header Section */}
-      <header className="flex flex-col sm:flex-row justify-between items-center mt-4 px-4 sm:px-8 gap-4">
-        <div className="flex items-center gap-4">
-          <img src={logo} alt="Health Consultancy Logo" className="h-12 w-auto" />
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <div className="text-3xl text-[#2A6F97]">
-            <IoIosNotifications />
-          </div>
-          <img 
-            className="w-10 h-10 rounded-full bg-gray-300 object-cover" 
-            alt="User Avatar" 
-          />
-        </div>
-      </header>
+      <MainHeader/>
 
       {/* Navigation Bar */}
-      <Navbar />
+      <Navbar showSearch={true} />
 
       {/* Main Content */}
       <main className="p-4 sm:p-6 lg:p-8 flex-grow">
@@ -59,9 +40,20 @@ const Dashboard = () => {
             </h2>
             <p className="italic text-gray-700">"Stay hydrated today!"</p>
           </div>
-          <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
-            <ChatBotButton />
-          </div>
+
+          {/* Chat Button */}
+          {!isChatOpen && (
+            <div className="absolute right-8 top-1/2 transform -translate-y-1/2 z-40">
+              <ChatBotButton onClick={() => setIsChatOpen(true)} />
+            </div>
+          )}
+
+          {/* Chat Window */}
+          {isChatOpen && (
+            <div className="absolute right-8 top-1/2 transform -translate-y-1/2 z-50">
+              <ChatWindow onClose={() => setIsChatOpen(false)} />
+            </div>
+          )}
         </section>
 
         {/* Summary Cards */}

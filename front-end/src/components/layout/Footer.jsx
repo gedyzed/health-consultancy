@@ -1,3 +1,6 @@
+
+
+
 export default function Footer() {
     return (
         <footer className="bg-[#2A6F97] font-serif text-white px-6 py-4 w-full">
