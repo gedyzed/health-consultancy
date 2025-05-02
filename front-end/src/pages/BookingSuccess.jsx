@@ -23,7 +23,7 @@ export default function BookingSuccess() {
       <MainHeader/>
       <Navbar/>
  
-    <div className="min-h-screen flex items-center justify-center bg-[#f0f8ff] px-4">
+    <div className="font-serif min-h-screen flex items-center justify-center bg-[#f0f8ff] px-4">
       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-xl text-center">
         <div className="flex justify-center mb-4">
          <CheckCircle size={64} className="text-[#2A6F97]" />
