@@ -30,7 +30,7 @@ export default function PatientSetProfile() {
       <form onSubmit={handleSubmit} className="bg-white p-8  rounded-xl w-full l space-y-6">
         <h2 className="text-2xl font-bold text-center text-shadow-blue-500">Set your personal profile</h2>
 
- <AddProfile/> 
+       <AddProfile/> 
         <div className="flex justify-center">
           <input type="file" accept="image/*" onChange={handleChange("profileImage")} className="file-input file-input-bordered file-input-sm" />
         </div>

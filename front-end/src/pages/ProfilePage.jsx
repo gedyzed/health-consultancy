@@ -41,7 +41,7 @@ const ProfilePage = () => {
 
   return (
 
-    <div>
+    <div className ="font-serif">
       <ProfileHeader/>
     <form onSubmit={handleSubmit} className="p-6 max-w-4xl mx-auto space-y-4">
       <h1 className="text-center text-xl font-bold text-[#0078b8]">
