@@ -5,6 +5,7 @@ import bookingReducer from "../features/appointmentBooking/bookingSlice";
 import patientSetProfileReducer from "../features/profile/patientSetProfileSlice"; // Added patientSetProfile reducer
 import registerReducer from '../features/auth/registerSlice';
 import loginReducer from '../features/auth/loginSlice';
+import doctorDashboardReducer from '../features/doctors/doctorDashboardSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ export const store = configureStore({
     booking:bookingReducer,
     patientSetProfile: patientSetProfileReducer, // Added patientSetProfile reducer
     register:registerReducer,
-    login:loginReducer
+    login:loginReducer,
+    doctorDashboard:doctorDashboardReducer
 
   }
 });

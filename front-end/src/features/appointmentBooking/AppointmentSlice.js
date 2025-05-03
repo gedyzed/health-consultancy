@@ -1,64 +1,30 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-
-const API_URL = "http://localhost:8000/api/appointments";// will be replace with with the backend url
-
-
-
+import { getAppointments, postAppointment } from "./appointmentAPI";
 
 export const fetchAppointments = createAsyncThunk(
   "appointment/fetchAppointments",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(API_URL);
-      return response.data;
+      return await getAppointments();
     } catch (err) {
       return rejectWithValue(err.response?.data || "Failed to fetch appointments");
     }
   }
 );
 
-// Create a new appointment
 export const createAppointment = createAsyncThunk(
   "appointment/createAppointment",
   async (newAppointment, { rejectWithValue }) => {
     try {
-      const response = await axios.post(API_URL, newAppointment);
-      return response.data;
+      return await postAppointment(newAppointment);
     } catch (err) {
       return rejectWithValue(err.response?.data || "Failed to create appointment");
     }
   }
 );
 
-
-//initail state
 const initialState = {
-  appointments: [
-    {
-      id: 1,
-      date: "2023-10-01",
-      time: "10:00 AM",
-      patient: "John Doe",
-      status: "upcoming",
-    },
-    
-    {
-      id: 2,
-      date: "2023-10-02",
-      time: "11:00 AM",
-      patient: "Jane Smith",
-      status: "closed",
-    },
-    {
-      id: 3,
-      date: "2023-10-03",
-      time: "12:00 PM",
-      patient: "Alice Johnson",
-      status: "upcoming",
-    }
-  ],
+  appointments: [],
   symptoms: [],
   paymentMethod: {
     bank: "",
@@ -69,7 +35,7 @@ const initialState = {
   loading: false,
   error: null,
 };
-   
+
 const appointmentSlice = createSlice({
   name: "appointment",
   initialState,
@@ -90,11 +56,8 @@ const appointmentSlice = createSlice({
       state.selectedTimeSlot = action.payload;
     },
   },
-
-  // Async actions
   extraReducers: (builder) => {
     builder
-      // ---- Fetch Appointments ----
       .addCase(fetchAppointments.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -107,8 +70,6 @@ const appointmentSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
-      // ---- Create Appointment ----
       .addCase(createAppointment.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -124,9 +85,6 @@ const appointmentSlice = createSlice({
   },
 });
 
-
-
-// Actions
 export const {
   setAppointments,
   setSymptoms,
@@ -135,14 +93,5 @@ export const {
   setSelectedTimeSlot,
 } = appointmentSlice.actions;
 
-// Selectors
-export const selectAppointments = (state) => state.appointment.appointments;
-export const selectSymptoms = (state) => state.appointment.symptoms;
-export const selectPaymentMethod = (state) => state.appointment.paymentMethod;
-export const selectSelectedDate = (state) => state.appointment.selectedDate;
-export const selectSelectedTimeSlot = (state) => state.appointment.selectedTimeSlot;
-export const selectLoading = (state) => state.appointment.loading;
-export const selectError = (state) => state.appointment.error;
-
-// Reducer
 export default appointmentSlice.reducer;
+export const selectAppointments = (state) => state.appointment.appointments;
