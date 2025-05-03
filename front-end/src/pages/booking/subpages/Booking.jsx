@@ -1,7 +1,7 @@
 import data from "./Doctors";
 import Calendar from "../../../components/others/Calander";
 import { useState, createContext } from "react";
-import { useDate } from "../Context/DateContext";
+import { useDate } from "../../../context/DateContext";
 const doctorprofile = data.doctorprofile;
 const ethiopianBanks = [
   "Abay Bank",
