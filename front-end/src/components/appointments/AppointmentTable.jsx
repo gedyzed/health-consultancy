@@ -1,35 +1,52 @@
-const AppointmentTable = ({ appointments }) => {
-    return (
-        <div className="rounded-lg p-4 mb-10">
-            <h3 className="text-xl font-semibold mb-4">Upcoming Appointment</h3>
-            <div className="hidden md:flex font-semibold bg-blue-200 p-3 rounded-xl">
-                <div className="w-1/4">Date</div>
-                <div className="w-1/4">Time</div>
-                <div className="w-1/4">Patient</div>
-                <div className="w-1/4">Status</div>
-            </div>
-            <div className="flex flex-col">
-                {appointments.map((appt, idx) => (
-                    <div
-                        key={idx}
-                        className="flex flex-col md:flex-row items-start md:items-center justify-between py-3 px-10 gap-2 hover:bg-blue-50 rounded"
-                    >
-                        <div className="w-full md:w-1/4">{appt.date}</div>
-                        <div className="w-full md:w-1/4">{appt.time}</div>
-                        <div className="w-full md:w-1/4">{appt.patient}</div>
-                        <div className="w-full md:w-1/4">
-                            <button className="btn btn-lg bg-[#2A6F97] text-white w-full">{appt.status}</button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    )
-}
+import { useSelector } from "react-redux";
+import { selectAppointments } from '../../features/appointmentBooking/AppointmentSlice';
 
-export default AppointmentTable
+const AppointmentTable = ({ title }) => {
+  const appointments = useSelector(selectAppointments);
 
+  const filtered = appointments.filter((a) =>
+    title.includes("Upcoming") ? a.status === "upcoming" : a.status === "closed"
+  );
 
-import React from "react";
+  return (
+    <div className="my-6 text-dark-900 font-semi-bold">
+      <h3 className="text-xl font-bold mb-2">{title}</h3>
+      <div className="overflow-x-auto rounded-box border border-base-300 p-4">
+        <table className="table w-full">
+          <thead className="bg-blue-300">
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Patient</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center py-4 text-gray-500 italic">
+                  No appointments found.
+                </td>
+              </tr>
+            ) : (
+              filtered.map((a, index) => (
+                <tr key={index} className="bg-blue-100 border-b border-base-200">
+                  <td>{a.date}</td>
+                  <td>{a.time}</td>
+                  <td>{a.patient}</td>
+                  <td>
+                    <button className="btn bg-[#2A6F97] btn-sm px-10 py-2 rounded-box text-white">
+                      {a.status === 'upcoming' ? 'Join' : 'Closed'}
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
 
-
+export default AppointmentTable;

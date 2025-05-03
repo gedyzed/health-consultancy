@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import data from "../../booking/subpages/Doctors";
+import data from "./booking/subpages/Doctors";
 const doctor = data.doctor;
 const Chat = () => {
   const [names, setNames] = useState([]);
