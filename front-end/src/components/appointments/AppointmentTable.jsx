@@ -50,3 +50,4 @@ const AppointmentTable = ({ title }) => {
 };
 
 export default AppointmentTable;
+

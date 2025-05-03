@@ -9,10 +9,13 @@ import MainFooter from "./components/layouts/MainFooter";
 
 // Public Pages
 import HomePage from "./pages/homepage/HomePage";
+
+
 import ContactPage from "./pages/homepage/subpages/Contact";
 import Services from "./pages/homepage/subpages/Services";
 import LoginPage from "./pages/login/LoginPage";
 import RegistorPage from "./pages/register/RegistorPage";
+
 
 // Patient Pages
 import PatientDashBoard from "./pages/patient/PatientDashBoard";
@@ -36,12 +39,15 @@ function App() {
   const isDoctor = isAuthenticated && userRole === "doctor";
   const isPatient = isAuthenticated && userRole === "patient";
 
+
+function App() {
   return (
+
     <GoogleOAuthProvider clientId={CLIENT_ID}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Router>
           <div className="flex flex-col justify-between min-h-screen">
-    
+   
             {!isAuthenticated && <MainNavbar />}
 
             <main className="flex-grow">
@@ -52,7 +58,6 @@ function App() {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegistorPage />} />
-
                 {/* Patient Routes */}
                 {isPatient && (
                   <>
@@ -80,11 +85,12 @@ function App() {
             </main>
 
             {!isAuthenticated && <MainFooter />}
+
           </div>
         </Router>
       </LocalizationProvider>
     </GoogleOAuthProvider>
-  );
+  );             
 }
 
-export default App
+export default App;
