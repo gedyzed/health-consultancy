@@ -1,6 +1,8 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 
+
+
 const initialState = {
   about: '',
   specialization: '',
@@ -13,15 +15,15 @@ const initialState = {
   certification: '',
 };
 
-const profileSlice = createSlice({
-  name: 'profile',
+const doctorProfileSlice = createSlice({
+  name: 'doctorProfile',
   initialState,
   reducers: {
-    setProfile: (state, action) => {
+    setDoctorProfile: (state, action) => {
       return { ...state, ...action.payload };
     },
   },
 });
 
-export const { setProfile } = profileSlice.actions;
-export default profileSlice.reducer;
+export const { setDoctorProfile } = doctorProfileSlice.actions;
+export default doctorProfileSlice.reducer;
