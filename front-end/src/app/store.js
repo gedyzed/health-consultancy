@@ -1,15 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit';
 import appointmentReducer from '../features/appointmentBooking/appointmentSlice';
-import profileReducer from '../features/profile/profileSlice'; // Fixed spelling
+import doctorProfileReducer from '../features/profile/doctorProfileSlice'; // Fixed spelling
 import bookingReducer from "../features/appointmentBooking/bookingSlice";
 import patientSetProfileReducer from "../features/profile/patientSetProfileSlice"; // Added patientSetProfile reducer
+import registerReducer from '../features/auth/registerSlice';
+import loginReducer from '../features/auth/loginSlice';
+import doctorDashboardReducer from '../features/doctors/doctorDashboardSlice';
 
 export const store = configureStore({
   reducer: {
     appointment: appointmentReducer,
-    profile: profileReducer,// Added profile reducer
+    DoctorProfile: doctorProfileReducer,// Added profile reducer
     booking:bookingReducer,
     patientSetProfile: patientSetProfileReducer, // Added patientSetProfile reducer
+    register:registerReducer,
+    login:loginReducer,
+    doctorDashboard:doctorDashboardReducer
 
   }
 });
