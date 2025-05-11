@@ -2,9 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 
-const API_URL = "http://localhost:8000/api/appointments";// will be replace with with the backend url
-
-
+const API_URL = "http://localhost:8000/api/appointments";
 
 
 export const fetchAppointments = createAsyncThunk(
@@ -19,7 +17,6 @@ export const fetchAppointments = createAsyncThunk(
   }
 );
 
-// Create a new appointment
 export const createAppointment = createAsyncThunk(
   "appointment/createAppointment",
   async (newAppointment, { rejectWithValue }) => {
@@ -33,7 +30,6 @@ export const createAppointment = createAsyncThunk(
 );
 
 
-//initail state
 const initialState = {
   appointments: [
     {
@@ -41,6 +37,7 @@ const initialState = {
       date: "2023-10-01",
       time: "10:00 AM",
       patient: "John Doe",
+      doctor: "Cooper, Kristin",
       status: "upcoming",
     },
     
@@ -49,14 +46,16 @@ const initialState = {
       date: "2023-10-02",
       time: "11:00 AM",
       patient: "Jane Smith",
-      status: "closed",
+      doctor: "Cooper, Kristin",
+      status: "upcoming",
     },
     {
       id: 3,
       date: "2023-10-03",
       time: "12:00 PM",
+      doctor: "Cooper, Kristin",
       patient: "Alice Johnson",
-      status: "upcoming",
+      status: "closed",
     }
   ],
   symptoms: [],
