@@ -4,7 +4,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 // Layouts
-import MainNavbar from "./components/layouts/MainNavbar";
+
 import MainFooter from "./components/layouts/MainFooter";
 
 // Public Pages
@@ -41,7 +41,7 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Router>
           <div className="flex flex-col justify-between min-h-screen">
-            {!isAuthenticated && <MainNavbar />}
+            {!isAuthenticated  }
 
             <main className="flex-grow">
               <Routes>
