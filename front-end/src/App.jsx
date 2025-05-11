@@ -53,7 +53,7 @@ function App() {
                 <Route path="/register" element={<RegistorPage />} />
 
                 {/* Patient Routes */}
-                {isPatient && (
+             {/* }   {isPatient && (*/}
                   <>
                     <Route path="/dashboard" element={<PatientDashBoard />} />
                     <Route path="/edit-profile" element={<EditProfile />} />
@@ -63,10 +63,10 @@ function App() {
                     <Route path="/chat" element={<ChatPage />} />
                     <Route path="/book" element={<BookingPage />} />
                   </>
-                )}
+             {/*   )}
 
                 {/* Doctor Routes */}
-                {isDoctor && (
+               {/* {isDoctor && ( */}
                   <>
                     <Route path="/dashboard" element={<DoctorDashBoard />} />
                     <Route path="/chat" element={<ChatPage />} />
@@ -74,7 +74,7 @@ function App() {
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/edit-profile" element={<EditProfile />} />
                   </>
-                )}
+             {/*   )} */}
               </Routes>
             </main>
 

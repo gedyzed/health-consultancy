@@ -126,7 +126,7 @@ const EditProfilePage = () => {
           </div>
 
           {/* Specializations Dropdown */}
-          <div>
+          <div >
             <label className="text-sm font-semibold">Specialization</label>
             <div className="flex space-x-2">
               <input
