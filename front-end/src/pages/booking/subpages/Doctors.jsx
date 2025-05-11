@@ -2,7 +2,7 @@
    const doctor = [
     { name: "daniel" },
     { name: "ruth" },
-    { name: "Gediyonbbbblaksdflaksdflkasdlfknalskdasdbb" },
+    { name: "Gedion" },
     { name: "Alazar" },
     { name: "ruth" },
     { name: "Gediyon" },

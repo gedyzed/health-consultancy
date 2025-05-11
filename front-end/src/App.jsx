@@ -9,7 +9,6 @@ import MainFooter from "./components/layouts/MainFooter";
 
 // Public Pages
 import HomePage from "./pages/homepage/HomePage";
-
 import ContactPage from "./pages/homepage/subpages/Contact";
 import Services from "./pages/homepage/subpages/Services";
 import LoginPage from "./pages/login/LoginPage";
@@ -17,7 +16,7 @@ import RegistorPage from "./pages/register/RegistorPage";
 
 // Patient Pages
 import PatientDashBoard from "./pages/patient/PatientDashBoard";
-import ProfilePage from "./pages/doctors/Profile/ProfilePage"
+import ProfilePage from "./pages/doctors/Profile/ProfilePage";
 import EditProfile from "./pages/doctors/Profile/EditProfile";
 import HelpCenter from "./pages/HelpCenter";
 import BookingSuccess from "./pages/booking/BookingSuccessful";
@@ -31,14 +30,13 @@ import DoctorDashBoard from "./pages/doctors/DoctorDashBoard";
 const CLIENT_ID = "279776484984-el62cf8hhv3hhovspg4b58ko1jgn5oe9.apps.googleusercontent.com";
 
 function App() {
-  const isAuthenticated = false; // or false
-  const userRole = "doctor";
+  const isAuthenticated = true; // Set to true if user is logged in
+  const userRole = "patient"; // or "doctor"
 
   const isDoctor = isAuthenticated && userRole === "doctor";
   const isPatient = isAuthenticated && userRole === "patient";
 
   return (
-
     <GoogleOAuthProvider clientId={CLIENT_ID}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Router>
@@ -83,7 +81,6 @@ function App() {
             </main>
 
             {!isAuthenticated && <MainFooter />}
-
           </div>
         </Router>
       </LocalizationProvider>

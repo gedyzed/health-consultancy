@@ -3,10 +3,16 @@ import data from "./booking/subpages/Doctors";
 const doctor = data.doctor;
 const Chat = () => {
   const [names, setNames] = useState([]);
-  const [currChat, setChat] = useState(null);
+  const [currChat, setChat] = useState(false);
+
   useEffect(() => {
     setNames(doctor);
   }, []);
+
+  
+
+
+
   return (
     <div className=" font-Lora bg-white">
       <div className="grid sm:grid-cols-12  mt-5">
@@ -24,17 +30,17 @@ const Chat = () => {
 
           <div className="sm:px-5  max-h-[500px] sm:overflow-y-auto pr-10 pl-7 ">
             {names.map((c) => (
-              <button className="border-1  border-[#023E8A]  block w-full my-1 h-12 rounded-lg text-black text-lg text-left pl-10 pr-2 overflow-x-hidden">
+              <button onClick={()=> setChat(true)} className="border-1  border-[#023E8A]  block w-full my-1 h-12 rounded-lg text-black text-lg text-left pl-10 pr-2 overflow-x-hidden">
                 {c.name}
               </button>
             ))}
           </div>
           <div></div>
         </div>
-        {currChat!=null  ?(<div className="hidden sm:inline sm:col-span-8 md:flex flex-col justify-between">
+        {currChat?(<div className="hidden sm:inline sm:col-span-8 md:flex flex-col justify-between">
            <div className="relative ">
             <div className="  border border-[#023E8A] rounded-lg  px-10 mx-10 h-12 bg-white">
-              <div className="pt-3">Daniel Mola</div>
+              <div className="pt-3">{}</div>
                 <div>
                   <img
                     src="./extraimg/camera-video.svg"
