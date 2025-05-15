@@ -6,6 +6,7 @@ import Welcome from './subpages/Welcome'
 import MainHeader from "../../components/layouts/MainHeader"
 import Navbar from '../../components/layouts/Navbar'
 import Footer from '../../components/layouts/Footer'
+import ChatBot from '../../components/chat/chatBot'
 
 const PatientDashBoard = () => {
     const [name, setName] = useState("Tomas Abel")
@@ -25,6 +26,7 @@ const PatientDashBoard = () => {
         <TopSearchedSpecialty />
         <DailyHealthTips />
     </div>
+    <ChatBot />
      <Footer />
     </div>
 
