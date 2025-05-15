@@ -26,15 +26,20 @@ import BookingPage from "./pages/booking/BookingPage";
 // Doctor Pages
 import ChatPage from "./pages/ChatPage";
 import DoctorDashBoard from "./pages/doctors/DoctorDashBoard";
+import Doctors from "./pages/booking/subpages/Doctors";
+
+//common pages
+import VideoConfig from "./pages/videos/VideoConfig";
 
 const CLIENT_ID = "279776484984-el62cf8hhv3hhovspg4b58ko1jgn5oe9.apps.googleusercontent.com";
 
 function App() {
   const isAuthenticated = true; // Set to true if user is logged in
-  const userRole = "doctor"; // or "doctor"
+  const userRole = "patient"; // or "doctor"
 
   const isDoctor = isAuthenticated && userRole === "doctor";
   const isPatient = isAuthenticated && userRole === "patient";
+  
 
   return (
     <GoogleOAuthProvider clientId={CLIENT_ID}>
@@ -57,11 +62,13 @@ function App() {
                 {isPatient && (
                   <>
                     <Route path="/dashboard" element={<PatientDashBoard />} />
+                    <Route path="/doctors" element={<Doctors />} />
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/booking-success" element={<BookingSuccess />} />
                     <Route path="/patient-set-profile" element={<PatientSetProfile />} />
                     <Route path="/chat/:id" element={<ChatPage />} />
                     <Route path="/book" element={<BookingPage />} />
+                    <Route path="/video/:userId/:peerId" element={<VideoConfig />} />
                   </>
                 )}
 
@@ -74,6 +81,7 @@ function App() {
                     <Route path="/edit-profile" element={<EditProfile />} />
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/edit-profile" element={<EditProfile />} />
+                    <Route path="/video/:userId/:peerId" element={<VideoConfig />} />
                   </>
                 )}
               </Routes>

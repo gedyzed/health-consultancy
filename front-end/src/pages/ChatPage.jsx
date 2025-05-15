@@ -3,8 +3,9 @@ import ChatApp from "./ChatApp.jsx";
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserToken, saveMessage } from "../features/chat/chatSliceApi";
+import { getUserToken, saveMessage, } from "../features/chat/chatSliceApi";
 import { unwrapResult } from "@reduxjs/toolkit";
+
 
 
 const doctors = [
@@ -80,10 +81,6 @@ const ChatPage = () => {
      init();
     
   }, [doctors, userId]);
-
-
- 
-
   return (
     <>
       <ChatApp chatClient={chatClient} />

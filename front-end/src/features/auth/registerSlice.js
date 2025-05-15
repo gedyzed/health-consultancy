@@ -5,11 +5,10 @@ export const registerUser = createAsyncThunk(
   'register/registerUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post('/api/register', userData);
+      const response = await axios.post('/api/signUp', userData);
       return response.data;
     } catch (error) {
-        const message =
-        error.response?.data?.message || "Failed to register"; // capture server msg
+        const message = error.response?.data?.message || "Failed to register"; // capture server msg
       return thunkAPI.rejectWithValue(message);
     }
   }
