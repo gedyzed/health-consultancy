@@ -31,20 +31,7 @@ const Chat = () => {
   };
 
   // Register user on backend
-  const registerUser = async (username) => {
-    try {
-      const res = await fetch("http://localhost:8000/api/create/agora/user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Registration failed");
-      addLog(`User ${username} registered successfully`);
-    } catch (err) {
-      addLog(`Registration error: ${err.message}`);
-    }
-  };
+
 
   // Get user token from backend
   const getUserToken = async (username) => {

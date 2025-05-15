@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVideo, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import AgoraChat from "agora-chat";
 import { useParams } from "react-router-dom";
-
-
+import { useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addChatMessage } from "../features/chat/chatMessageSlice";
 import { saveMessage } from "../features/chat/chatSliceApi";
+import VideoConfig from "./videos/VideoConfig"
+
 
 import {
     setUserId,
@@ -18,7 +19,6 @@ import {
     setIsLoggedIn,
     setCurrentChat,
     setToken,
-
 } from "../features/chat/chatSlice"
 
 
@@ -34,8 +34,9 @@ const ChatApp = ({ chatClient }) => {
 
     const appKey = import.meta.env.VITE_APP_KEY;
     const dispatch = useDispatch();
-    
-    
+    const navigate = useNavigate();
+
+
     //user chat states 
     const messages = useSelector(state => state.messages.messages)
     const userId = useSelector(state => state.chatState.userId);
@@ -44,7 +45,7 @@ const ChatApp = ({ chatClient }) => {
     const currentChat = useSelector(state => state.chatState.currentChat)
     const logs = useSelector(state => state.chatState.logs);
     const IsLoggedIn = useSelector(state => state.chatState.IsLoggedIn);
-
+    const [startCall, setStartCall] = useState(false);
 
 
  
@@ -75,11 +76,13 @@ const ChatApp = ({ chatClient }) => {
 
         const peerKey = user === userId ? receiver : user; 
         const timestamp = Date.now();
-            dispatch(addChatMessage({
+            dispatch(addChatMessage(
+                {
                 receiver: peerKey, 
                 message: {user, msg, direction, timestamp}
-            }));
-            
+            }
+        ));
+
         //==========================save data ==========
         // messageData = {
         //     message_id: `msg_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
@@ -145,7 +148,14 @@ const ChatApp = ({ chatClient }) => {
     const handleSelectChat = (doctor) => {
         dispatch(setCurrentChat(doctor));
         dispatch(setPeerId(doctor.id));
-    }
+    };
+  const handlevideocall = () => 
+    {
+        setStartCall(true);
+         if (userId && peerId) {
+        navigate(`/video/${userId}/${peerId}`);
+  }
+    }  
 
 const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -203,6 +213,7 @@ const formatTime = (timestamp) => {
                                 <button className="p-2 rounded-full hover:bg-blue-100">
                                     <FontAwesomeIcon
                                         icon={faVideo}
+                                        onClick={handlevideocall}
                                         className="text-[#023E8A] h-5 w-5"
                                     />
                                 </button>

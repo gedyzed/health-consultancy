@@ -22,7 +22,7 @@ export const saveMessage = createAsyncThunk(
   }
 );
 
-export const registerUser = createAsyncThunk(
+export const registerAgoraUser = createAsyncThunk(
   'app/registerUser',
   async (username, { rejectWithValue }) => {
     try {

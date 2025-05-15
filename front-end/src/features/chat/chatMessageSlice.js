@@ -7,15 +7,12 @@ const chatMessageSlice = createSlice({
     },
     reducers:{
         addChatMessage:(state, action) => {
-
             const {receiver, message} = action.payload
-            console.log(receiver, message)
             if (!state.messages[receiver]){
                 state.messages[receiver] = [];
             }
 
             state.messages[receiver].push(message)
-   
         }
     }
 });

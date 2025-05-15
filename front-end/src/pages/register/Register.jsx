@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerUser, clearStatus } from "../../features/auth/registerSlice";
 import { Link, useNavigate } from "react-router-dom";
 import google from "../../assets/Login/Icon/Google Icon.svg";
+import { registerAgoraUser } from "../../features/chat/chatSliceApi";
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
   const { loading, error, success } = useSelector((state) => state.register);
 
   const [formData, setFormData] = useState({
@@ -54,6 +56,24 @@ const Register = () => {
     return newErrors;
   };
 
+
+const registerChatUser = async (email) => {
+    const username = `${email.split('@')[0]}_${email.spli('@')[1]}`;
+
+      try{
+        const result = await dispatch(registerAgoraUser(username))
+        const { userData } = unwrapResult(result)
+
+        if(userData){
+         alert("Error in registring user")
+          return; 
+        }
+      }
+      catch(err) {
+        console.log("Failed to register user");
+      } 
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -62,9 +82,12 @@ const Register = () => {
       return;
     }
     dispatch(registerUser(formData));
+    registerChatUser();
     setFormData({ email: "", role: "", password: "" });
     setErrors({});
   };
+
+  
 
   return (
     <div className="font-Lora md:grid md:grid-cols-12 my-[35px] justify-center lg:mx-[100px] md:mx-[50px] mx-[30px] sm:mx-[40px] md:gap-4 lg:gap-6">
