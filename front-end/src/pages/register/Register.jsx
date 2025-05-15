@@ -1,165 +1,142 @@
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { registerUser, clearStatus } from "../../features/auth/registerSlice";
-import { Link, useNavigate } from "react-router-dom";
-import google from "../../assets/Login/Icon/Google Icon.svg";
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser, clearStatus } from '../../features/auth/registerSlice';
+import { clearAuthState } from '../../features/auth/loginSlice';
+import { Link, useNavigate } from 'react-router-dom';
+import google from '../../assets/Login/Icon/Google Icon.svg';
+import signupImg from '../../assets/Signup/image/signup.png';
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { loading, error, success } = useSelector((state) => state.register);
 
   const [formData, setFormData] = useState({
-    email: "",
-    role: "",
-    password: ""
-    
+    email: '',
+    role: '',
+    password: '',
   });
 
   const [errors, setErrors] = useState({});
 
+  // Clear ALL auth states on mount
   useEffect(() => {
+    dispatch(clearAuthState());
+    dispatch(clearStatus());
+
     return () => {
       dispatch(clearStatus());
     };
   }, [dispatch]);
 
+  // Handle success with delay
   useEffect(() => {
     if (success) {
-      setTimeout(() => {
-        navigate("/login");
+      const timer = setTimeout(() => {
+        navigate('/login', { state: { fromRegistration: true } });
       }, 1500);
+      return () => clearTimeout(timer);
     }
   }, [success, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.email.includes("@")) {
-      newErrors.email = "Invalid email format";
-    }
-    if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-    if (!formData.role.trim()) {
-      newErrors.role = "Role is required";
-    }
+    if (!formData.email.includes('@')) newErrors.email = 'Invalid email format';
+    if (formData.password.length < 6) newErrors.password = 'Min 6 characters';
+    if (!formData.role.trim()) newErrors.role = 'Role is required';
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
+    if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
       return;
     }
-    dispatch(registerUser(formData));
-    setFormData({ email: "", role: "", password: "" });
-    setErrors({});
+
+    try {
+      await dispatch(registerUser(formData)).unwrap();
+      setFormData({ email: '', role: '', password: '' });
+    } catch (err) {
+      console.error('Registration failed:', err);
+    }
   };
 
   return (
-    <div className="font-Lora md:grid md:grid-cols-12 my-[35px] justify-center lg:mx-[100px] md:mx-[50px] mx-[30px] sm:mx-[40px] md:gap-4 lg:gap-6">
-      {/* Form section */}
-      <div className="col-span-6 text-white h-110 w-full md:px-15 lg:px-20 px-8">
+    <div className="font-Lora grid grid-cols-1 md:grid-cols-12 gap-4 mx-6 md:mx-12 lg:mx-24 my-10">
+      {/* Form Section */}
+      <div className="col-span-6 px-6 md:px-10">
         <form onSubmit={handleSubmit} noValidate>
-          <h1 className="text-[#023E8A] font-bold text-center text-xl mb-7">
-            Sign Up
-          </h1>
-          
+          <h1 className="text-[#023E8A] font-bold text-xl text-center mb-6">Sign Up</h1>
+
+          {/* Google Button (Disabled) */}
           <button
             type="button"
-            className="flex items-center justify-center border-2 border-[#023E8A] text-white w-full h-10 my-1 rounded-[10px] px-4"
-            disabled={loading}
+            disabled
+            className="flex items-center justify-center border border-[#023E8A] text-white w-full h-10 mb-3 rounded-[10px] px-4"
           >
             <img src={google} alt="Google" className="h-5 w-5" />
-            <span className="block text-center w-full text-[#023E8A]">
-              Use Google account
-            </span>
+            <span className="ml-3 text-[#023E8A]">Use Google account</span>
           </button>
 
-          <p className="text-[#023E8A] text-center mt-1">Or Sign up with</p>
+          <p className="text-[#023E8A] text-center mb-4">Or sign up with</p>
 
-          {/* Email */}
-          <label htmlFor="email" className="block mb-1 text-[#023E8A]">
-            Email
-          </label>
-          <input
-            className="w-full bg-white border-2 rounded-[10px] h-10 mb-2 border-[#023E8A]"
-            type="email"
-            name="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+          {/* Input Fields */}
+          {['email', 'role', 'password'].map((field) => (
+            <div key={field} className="mb-4">
+              <label htmlFor={field} className="block text-[#023E8A] capitalize mb-1">
+                {field}
+              </label>
+              <input
+                id={field}
+                name={field}
+                type={field === 'password' ? 'password' : 'text'}
+                value={formData[field]}
+                onChange={handleChange}
+                className="w-full border-2 border-[#023E8A] rounded-[10px] h-10 px-3 text-black bg-white"
+              />
+              {errors[field] && (
+                <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
+              )}
+            </div>
+          ))}
 
-          {/* Role */}
-          <label htmlFor="role" className="block mb-1 text-[#023E8A]">
-            Role
-          </label>
-          <input
-            className="w-full border-2 border-[#023E8A] rounded-[10px] h-10"
-            type="text"
-            name="role"
-            id="role"
-            value={formData.role}
-            onChange={handleChange}
-            required
-          />
-          {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
-
-          {/* Password */}
-          <label htmlFor="password" className="block mb-1 text-[#023E8A]">
-            password
-          </label>
-          <input
-            className="w-full border-2 rounded-[10px] h-10 border-[#023E8A]"
-            type="password"
-            name="password"
-            id="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-
-          {/* Server messages */}
+          {/* Global error/success messages */}
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          {success && <p className="text-green-600 text-sm mt-2">Registration successful!</p>}
+          {success && <p className="text-green-600 text-sm mt-2">{success}</p>}
 
-          {/* Submit */}
-          <div className="mt-8">
-            <button
-              type="submit"
-              className="text-white w-full h-10 bg-[#023E8A] rounded-[10px] cursor-pointer"
-              disabled={loading}
-            >
-              {loading ? "Signing up..." : "Sign Up"}
-            </button>
-            <Link to="/login" className="flex justify-center text-[#023E8A] text-sm mt-1">
-              Do you have an account ? Login
-            </Link>
-          </div>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-5 bg-[#023E8A] text-white w-full h-10 rounded-[10px] disabled:opacity-50"
+          >
+            {loading ? 'Signing up...' : 'Sign Up'}
+          </button>
+
+          <Link to="/login" className="block text-center text-sm text-[#023E8A] mt-3">
+            Already have an account? Login
+          </Link>
         </form>
       </div>
 
-      {/* Image section */}
-      <div className="flex-col flex justify-end h-80 sm:h-110 col-span-6 bg-[url('src/assets/Signup/image/signup.png')] bg-cover">
-        <div className="bg-white opacity-50 flex flex-col m-3 sm:m-4 md:m-6 lg:m-10 p-3 sm:p-4 md:p-6 lg:p-10 rounded-lg">
-          <h2 className="text-[#023E8A] text-sm sm:text-lg md:text-base lg:text-3xl font-extrabold mb-1 sm:mb-2">
+      {/* Image Section */}
+      <div
+        className="hidden md:flex col-span-6 justify-end items-end bg-cover bg-center rounded-lg"
+        style={{ backgroundImage: `url(${signupImg})` }}
+      >
+        <div className="bg-white bg-opacity-70 m-5 p-4 rounded-lg max-w-sm">
+          <h2 className="text-[#023E8A] font-extrabold text-lg mb-1">
             Empower Your Health with Expert Support
           </h2>
-          <p className="text-[#023E8A] text-[10px] font-bold extra-bold">
+          <p className="text-[#023E8A] font-bold text-sm">
             Create an account to access trusted consultants and health tools.
           </p>
         </div>

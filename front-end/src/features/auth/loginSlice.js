@@ -1,42 +1,44 @@
-//features/auth/loginSlice
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { loginUserAPI } from './loginAPI';
 
-const API_URL=""; // API url goes here 
-
-// Async thunk for logging in
+// Async Thunk for login
 export const loginUser = createAsyncThunk(
-  'login/loginUser', // Changed from 'auth/loginUser' to 'login/loginUser'
-  async ({ email, password }, thunkAPI) => {
+  'login/loginUser',
+  async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(API_URL, { email, password });
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user',JSON.stringify(response.data.user));
-      return response.data;
+      const data = await loginUserAPI({ email, password });
+      return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || 'Login failed'
+      return rejectWithValue(
+        error.response?.data?.message || 'Login failed. Please try again.'
       );
     }
   }
 );
 
-// Create loginSlice
+const initialState = {
+  user: JSON.parse(localStorage.getItem('user')) || null,
+  token: localStorage.getItem('token') || null,
+  loading: false,
+  error: null,
+};
+
 const loginSlice = createSlice({
   name: 'login',
-  initialState: {
-    user: JSON.parse(localStorage.getItem('user'))||null,
-    token: localStorage.getItem('token')||null,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.error = null;
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+    },
+    clearAuthState: (state) => {
+      state.user = null;
+      state.token = null;
+      state.error = null;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {
@@ -48,15 +50,20 @@ const loginSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
-        state.user = action.payload.user || null;
+        state.user = action.payload.user;
+       state.token = action.payload.authorisation.token;
+state.user = action.payload.user;
+       localStorage.setItem('token', action.payload.authorisation.token);
+       localStorage.setItem('user', JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Something went wrong.';
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       });
   },
 });
 
-// Export actions and reducer
-export const { logout } = loginSlice.actions;
+export const { logout, clearAuthState } = loginSlice.actions;
 export default loginSlice.reducer;

@@ -1,32 +1,36 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
-import { loginUser } from "../../features/auth/loginSlice";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../../features/auth/loginSlice';
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, loading } = useSelector((state) => state.login);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  const { loading, error, user, token } = useSelector((state) => state.login);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Auto-redirect based on role
+  useEffect(() => {
+    if (token && user) {
+      const role = user.role;
+      if (role === 'doctor') navigate('/doctor-dashboard');
+      else if (role === 'patient') navigate('/patient-dashboard');
+      else navigate('/dashboard');
+    }
+  }, [token, user, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!email || !password) return;
+
     dispatch(loginUser({ email, password }))
       .unwrap()
-      .then(() => navigate("/"))
-      .catch(() => {});
-  };
-
-  const handleGoogleLoginSuccess = (response) => {
-    const token = response.credential;
-    const decoded = jwtDecode(token);
-    dispatch(loginWithGoogle({ token, decoded }))
-      .unwrap()
-      .then(() => navigate("/"))
-      .catch(() => {});
+     
+    
+      .catch(() => {}); // error already handled in slice
   };
 
   return (
@@ -37,23 +41,17 @@ const Login = () => {
             Welcome Back!
           </h1>
 
-          <GoogleLogin
-            onSuccess={handleGoogleLoginSuccess}
-            onError={() => {}}
-            useOneTap
-            shape="pill"
-          >
-            <button className="flex items-center justify-center border-2 border-[#023E8A] text-white w-full h-10 my-1 rounded-[10px] px-4">
-              <img 
-                src="/Login/Icon/Google Icon.svg" 
-                alt="Google" 
-                className="h-5 w-5" 
-              />
-              <span className="block text-center w-full text-[#023E8A]">
-                Use Google account
-              </span>
-            </button>
-          </GoogleLogin>
+          {/* Google Login - Disabled for now */}
+          <div className="flex items-center justify-center border-2 border-[#023E8A] text-white w-full h-10 my-1 rounded-[10px] px-4 opacity-50 cursor-not-allowed bg-gray-100">
+            <img
+              src="/Login/Icon/Google Icon.svg"
+              alt="Google"
+              className="h-5 w-5"
+            />
+            <span className="block text-center w-full text-[#023E8A]">
+              Google login coming soon
+            </span>
+          </div>
 
           <p className="text-[#023E8A] text-center mt-1">Or log in with</p>
 
@@ -62,7 +60,7 @@ const Login = () => {
           </label>
           <input
             className="pl-1 w-full bg-white border-2 rounded-[10px] h-10 mb-2"
-            style={{ borderColor: "#023E8A" }}
+            style={{ borderColor: '#023E8A' }}
             type="email"
             id="email"
             value={email}
@@ -70,11 +68,11 @@ const Login = () => {
           />
 
           <label htmlFor="password" className="block mb-1 text-[#023E8A]">
-            password
+            Password
           </label>
           <input
             className="pl-1 w-full bg-white border-2 rounded-[10px] h-10"
-            style={{ borderColor: "#023E8A" }}
+            style={{ borderColor: '#023E8A' }}
             type="password"
             id="password"
             value={password}
@@ -84,7 +82,7 @@ const Login = () => {
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
           <p className="flex justify-end text-[#023E8A] text-sm">
-            Forgot password ?
+            Forgot password?
           </p>
 
           <div className="mt-8">
@@ -92,13 +90,13 @@ const Login = () => {
               className="text-white w-full h-10 bg-[#023E8A] rounded-[10px]"
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
             <Link
               className="flex justify-center text-[#023E8A] text-sm mt-1"
               to="/register"
             >
-              Don’t you have an account ? Sign Up
+              Don’t have an account? Sign Up
             </Link>
           </div>
         </form>
@@ -110,8 +108,7 @@ const Login = () => {
             Access your health journey — anytime, anywhere.
           </div>
           <p className="text-[#023E8A] text-[10px] font-bold">
-            Log in to manage appointments, view records, and connect with your
-            consultant.
+            Log in to manage appointments, view records, and connect with your consultant.
           </p>
         </div>
       </div>

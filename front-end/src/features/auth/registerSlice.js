@@ -1,20 +1,33 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { registerUserAPI } from './registerAPI';
 
+// Async Thunk
 export const registerUser = createAsyncThunk(
   'register/registerUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post('/api/register', userData);
-      return response.data;
+      const data = await registerUserAPI(userData);
+      return data;
     } catch (error) {
-        const message =
-        error.response?.data?.message || "Failed to register"; // capture server msg
+      let message = 'Registration failed';
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = 'Invalid request data';
+            break;
+          case 409:
+            message = 'Email already registered';
+            break;
+          default:
+            message = error.response.data?.message || message;
+        }
+      }
       return thunkAPI.rejectWithValue(message);
     }
   }
 );
 
+// Slice
 const registerSlice = createSlice({
   name: 'register',
   initialState: {
@@ -36,13 +49,14 @@ const registerSlice = createSlice({
         state.error = null;
         state.success = null;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
-        state.success = 'Registration successful';
+        state.success = 'Registration successful!';
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Something went wrong';
+        state.error = action.payload;
+        state.success = null;
       });
   },
 });
