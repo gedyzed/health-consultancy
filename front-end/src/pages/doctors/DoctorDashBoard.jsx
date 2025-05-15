@@ -9,6 +9,7 @@ import CommentsSection from '../../components/comments/CommentSection';
 import ChatBotButton from '../../components/chat/ChatBotButton';
 import ChatWindow from '../../components/chat/chatWindow';
 import MainHeader from '../../components/layouts/MainHeader';
+import Welcome from '../patient/subpages/Welcome';
 
 import { fetchAppointments } from "../../features/appointmentBooking/AppointmentSlice";
 

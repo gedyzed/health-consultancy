@@ -30,8 +30,8 @@ import DoctorDashBoard from "./pages/doctors/DoctorDashBoard";
 const CLIENT_ID = "279776484984-el62cf8hhv3hhovspg4b58ko1jgn5oe9.apps.googleusercontent.com";
 
 function App() {
-  const isAuthenticated = false; // Set to true if user is logged in
-  const userRole = "patient"; // or "doctor"
+  const isAuthenticated = true; // Set to true if user is logged in
+  const userRole = "doctor"; // or "doctor"
 
   const isDoctor = isAuthenticated && userRole === "doctor";
   const isPatient = isAuthenticated && userRole === "patient";
@@ -45,6 +45,7 @@ function App() {
 
             <main className="flex-grow">
               <Routes>
+
                 {/* Public Routes */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/services" element={<Services />} />
@@ -56,11 +57,10 @@ function App() {
                 {isPatient && (
                   <>
                     <Route path="/dashboard" element={<PatientDashBoard />} />
-                    <Route path="/edit-profile" element={<EditProfile />} />
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/booking-success" element={<BookingSuccess />} />
                     <Route path="/patient-set-profile" element={<PatientSetProfile />} />
-                    <Route path="/chat" element={<ChatPage />} />
+                    <Route path="/chat/:id" element={<ChatPage />} />
                     <Route path="/book" element={<BookingPage />} />
                   </>
                 )}
@@ -69,8 +69,9 @@ function App() {
                 {isDoctor && (
                   <>
                     <Route path="/dashboard" element={<DoctorDashBoard />} />
-                    <Route path="/chat" element={<ChatPage />} />
-                    <Route path="/set-profile" element={<ProfilePage />} />
+                    <Route path="/chat/:id" element={<ChatPage />} />
+                    <Route path="/set-profile" element={<EditProfile />} />
+                    <Route path="/edit-profile" element={<EditProfile />} />
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/edit-profile" element={<EditProfile />} />
                   </>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import AppointmentTable from '../../components/Appointments/AppointmentTable'
+import AppointmentTable from '../../components/appointments/Appointment'
 import TopSearchedSpecialty from './subpages/TopSearchedSpecialty'
 import DailyHealthTips from './subpages/DailyHealthTips'
 import Welcome from './subpages/Welcome'

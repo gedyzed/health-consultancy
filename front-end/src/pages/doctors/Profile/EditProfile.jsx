@@ -2,23 +2,43 @@ import React, { useState } from 'react';
 import MainHeader from '../../../components/layouts/MainHeader';
 import Navbar from '../../../components/layouts/Navbar';
 import Footer from '../../../components/layouts/Footer';
+import { useDispatch } from 'react-redux';
+import { submitDoctorProfile } from '../../../features/doctors/doctorsProfileApi';
 
 
 const EditProfilePage = () => {
+
+  const dispatch = useDispatch()
+
   const [form, setForm] = useState({
     name: '',
     rate: '',
+    profileImage: null,
+    profileImagePreview: '',
     experience: '',
     specialization: '',
     specializations: [],
-    institution: '',
-    degree: '',
-    graduationYear: '',
     educationList: [],
     languages: [],
     languageInput: '',
     about: '',
+    certifications: [],
+    certificationInput: '',
   });
+
+
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm((prev) => ({
+        ...prev,
+        profileImage: {
+          file,
+          preview: URL.createObjectURL(file),
+        },
+      }));
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,20 +61,29 @@ const EditProfilePage = () => {
     setForm({ ...form, specializations: updated });
   };
 
-  const addEducation = () => {
-    if (form.degree && form.institution && form.graduationYear) {
-      const newEntry = `${form.degree}, ${form.institution}:${form.graduationYear}`;
-      setForm({
-        ...form,
-        educationList: [...form.educationList, newEntry],
-        degree: '',
-        institution: '',
-        graduationYear: '',
-      });
+  const handleAddEducation = () => {
+    const parts = form.degreeInput.split(',').map((part) => part.trim());
+
+    if (parts.length === 3) {
+      const [degree, institution, year] = parts;
+
+      const newEducation = {
+        degree,
+        institution,
+        year,
+      };
+
+      setForm((prevForm) => ({
+        ...prevForm,
+        educationList: [...prevForm.educationList, newEducation],
+        degreeInput: '',
+      }));
+    } else {
+      alert('Please enter in the format: Degree, Institution, Year');
     }
   };
 
-  const removeEducation = (index) => {
+  const handleRemoveEducation = (index) => {
     const updated = [...form.educationList];
     updated.splice(index, 1);
     setForm({ ...form, educationList: updated });
@@ -76,10 +105,53 @@ const EditProfilePage = () => {
     setForm({ ...form, languages: updated });
   };
 
+  const handleAddCertification = () => {
+    if (
+      form.certificationInput &&
+      !form.certifications.includes(form.certificationInput)
+    ) {
+      setForm((prevForm) => ({
+        ...prevForm,
+        certifications: [...prevForm.certifications, prevForm.certificationInput],
+        certificationInput: '',
+      }));
+    }
+  };
+
+  const handleRemoveCertification = (index) => {
+    setForm((prevForm) => {
+      const updated = [...prevForm.certifications];
+      updated.splice(index, 1);
+      return { ...prevForm, certifications: updated };
+    });
+  };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    dispatch(submitDoctorProfile({
+    form,
+    doctorId: 3, 
+
+  }));
+
     console.log('Submitted Profile:', form);
-    // Dispatch or send to backend here
+    setForm({
+    name: '',
+    rate: '',
+    profileImage: null,
+    profileImagePreview: '',
+    experience: '',
+    specialization: '',
+    specializations: [],
+    educationList: [],
+    languages: [],
+    languageInput: '',
+    about: '',
+    certifications: [],
+    certificationInput: '',
+  })
   };
 
   return (
@@ -89,10 +161,21 @@ const EditProfilePage = () => {
 
       {/* Avatar & Edit */}
       <div className="w-full max-w-sm mx-auto flex flex-col gap-2 items-center pt-4">
-        <label htmlFor="image-upload" className="cursor-pointer w-20 h-20 rounded-full p-6 text-sm border border-[#0078b8] hover:border-blue-500">
-          <input id="image-upload" type="file" accept="image/*" className="hidden" />
+        <label htmlFor="image-upload" className="cursor-pointer w-20 h-20 rounded-full overflow-hidden border border-[#0078b8] hover:border-blue-500">
+          {form.profileImagePreview ? (
+            <img src={form.profileImagePreview} alt="Preview" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-xs text-[#0078b8]">Upload</div>
+          )}
+          <input
+            id="image-upload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleProfileImageChange}
+          />
         </label>
-        <button className="text-sm underline text-[#0078b8]">Edit profile</button>
+
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-5xl mx-auto p-6 space-y-6">
@@ -126,7 +209,7 @@ const EditProfilePage = () => {
           </div>
 
           {/* Specializations Dropdown */}
-          <div>
+          <div >
             <label className="text-sm font-semibold">Specialization</label>
             <div className="flex space-x-2">
               <input
@@ -148,31 +231,46 @@ const EditProfilePage = () => {
             </div>
           </div>
 
-          <div>
-            <label className="text-sm font-semibold">Institution of Graduation</label>
-            <input name="institution" value={form.institution} onChange={handleInputChange} className="w-full border border-[#0078b8] rounded-2xl p-2" />
-          </div>
-          <div>
-            <label className="text-sm font-semibold">Year of Graduation</label>
-            <input name="graduationYear" value={form.graduationYear} onChange={handleInputChange} className="w-full border border-[#0078b8] rounded-2xl p-2" />
-          </div>
-          <div>
-            <label className="text-sm font-semibold">Degree earned</label>
-            <input name="degree" value={form.degree} onChange={handleInputChange} className="w-full border border-[#0078b8] rounded-2xl p-2" />
-          </div>
+          {/* Degrees Input (Comma-separated) */}
+          <div className="mt-2 space-y-1">
+            <label className="text-sm font-semibold">Degree (Degree, Institution, Year)</label>
+            <div className="flex space-x-2">
+              <input
+                name="degreeInput"
+                placeholder="e.g. MD, Harvard University, 2020"
+                value={form.degreeInput}
+                onChange={(e) => setForm({ ...form, degreeInput: e.target.value })}
+                className="w-full border border-[#0078b8] rounded-2xl p-2"
+              />
+              <button
+                type="button"
+                onClick={handleAddEducation}
+                className="bg-[#0078b8] text-white rounded px-4 text-sm"
+              >
+                +
+              </button>
+            </div>
 
-          {/* Education List */}
-          <div>
-            <button type="button" onClick={addEducation} className="bg-[#0078b8] text-white rounded px-4 py-1 text-sm mt-6">Add new Specialization</button>
             <div className="mt-2 space-y-1">
               {form.educationList.map((edu, idx) => (
-                <div key={idx} className="flex justify-between items-center border border-[#0078b8] rounded px-2 py-1">
-                  <span>{edu}</span>
-                  <button type="button" onClick={() => removeEducation(idx)} className="text-red-600">🗑</button>
+                <div
+                  key={idx}
+                  className="flex justify-between items-center border border-[#0078b8] rounded px-2 py-1"
+                >
+                  <span>{edu.degree} — {edu.institution} ({edu.year})</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveEducation(idx)}
+                    className="text-red-600"
+                  >
+                    🗑
+                  </button>
                 </div>
               ))}
             </div>
           </div>
+
+
 
           {/* Languages */}
           <div>
@@ -197,6 +295,45 @@ const EditProfilePage = () => {
             </div>
           </div>
         </div>
+
+        <div className="mt-2 space-y-1">
+          <label className="text-sm font-semibold">Certifications</label>
+          <div className="flex space-x-2">
+            <input
+              name="certificationInput"
+              placeholder="e.g. Board Certified in Internal Medicine"
+              value={form.certificationInput}
+              onChange={(e) => setForm({ ...form, certificationInput: e.target.value })}
+              className="w-full border border-[#0078b8] rounded-2xl p-2"
+            />
+            <button
+              type="button"
+              onClick={handleAddCertification}
+              className="bg-[#0078b8] text-white rounded px-4 text-sm"
+            >
+              +
+            </button>
+          </div>
+
+          <div className="mt-2 space-y-1">
+            {form.certifications.map((cert, idx) => (
+              <div
+                key={idx}
+                className="flex justify-between items-center border border-[#0078b8] rounded px-2 py-1"
+              >
+                <span>{cert}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveCertification(idx)}
+                  className="text-red-600"
+                >
+                  🗑
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
 
         {/* Submit */}
         <div className="text-center pt-6">
