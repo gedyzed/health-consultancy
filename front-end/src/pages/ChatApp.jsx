@@ -5,8 +5,11 @@ import AgoraChat from "agora-chat";
 import { useParams } from "react-router-dom";
 
 
+
 import { useDispatch, useSelector } from "react-redux";
 import { addChatMessage } from "../features/chat/chatMessageSlice";
+import { saveMessage } from "../features/chat/chatSliceApi";
+
 import {
     setUserId,
     setPeerId,
@@ -75,10 +78,21 @@ const ChatApp = ({ chatClient }) => {
             dispatch(addChatMessage({
                 receiver: peerKey, 
                 message: {user, msg, direction, timestamp}
-            }));   
-     
+            }));
+            
+        //==========================save data ==========
+        // messageData = {
+        //     message_id: `msg_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
+        //     receiver_id:receiver,
+        //     sender_id:user,
+        //     Date:now.toISOString().split('T')[0],
+        //     Time:now.toTimeString.split(' ')[0],
+        //     Message:msg,
+        //     created_at:now.toISOString(),
+        //     updated_at:now.toISOString(),
+        // }    
+        // dispatch(saveMessage(messageData))   
     };
-
 
     useEffect(() => {
         // Initializes the Web client.
@@ -132,6 +146,11 @@ const ChatApp = ({ chatClient }) => {
         dispatch(setCurrentChat(doctor));
         dispatch(setPeerId(doctor.id));
     }
+
+const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
     return (
         <div className="font-Lora bg-white min-h-screen">
@@ -210,6 +229,7 @@ const ChatApp = ({ chatClient }) => {
                                                         }`}
                                                 >
                                                     <div className="text-xs font-medium mb-1">
+                                                        {console.log(msg)}
                                                         {msg.user === userId ? "You" : currentChat.name}
                                                     </div>
                                                     <div>{msg.msg}</div>

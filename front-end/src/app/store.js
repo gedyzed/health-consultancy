@@ -8,7 +8,6 @@ import loginReducer from '../features/auth/loginSlice';
 import doctorDashboardReducer from '../features/doctors/doctorDashboardSlice';
 import doctorChatReducer from '../features/doctorChat/doctorChatSlice';
 import patientChatReducer from  '../features/patientChat/patientChatSlice';
-import chatSliceApi from "../features/chat/chatSliceApi"
 import chatSlice from "../features/chat/chatSlice"
 import chatMessageReducer from "../features/chat/chatMessageSlice"
 
@@ -23,7 +22,6 @@ export const store = configureStore({
     doctorDashboard:doctorDashboardReducer,
     // chat:doctorChatReducer,
     patientChat:patientChatReducer,
-    chatToken:chatSliceApi,
     chatState:chatSlice,
     messages:chatMessageReducer
   }
