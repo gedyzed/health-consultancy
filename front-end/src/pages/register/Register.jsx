@@ -14,8 +14,9 @@ const Register = () => {
   const [formData, setFormData] = useState({
     email: "",
     role: "",
-    password: ""
-    
+    password: "",
+    created_at:"",
+    updated_at:"",
   });
 
   const [errors, setErrors] = useState({});
@@ -58,16 +59,25 @@ const Register = () => {
 
 
 const registerChatUser = async (email) => {
-    const username = `${email.split('@')[0]}_${email.spli('@')[1]}`;
 
+    const [local, domain] = email.split('@');
+    const username = `${local}_${domain}`;
+    if (!username){
+      setErrors("username is empty!")
+      throw new ("failed to login");
+      return;
+    }
+    
       try{
         const result = await dispatch(registerAgoraUser(username))
         const { userData } = unwrapResult(result)
 
         if(userData){
-         alert("Error in registring user")
+          throw new ("failed to login");
+          setErrors("Error in registring user")
           return; 
         }
+        console.log("login successful!")
       }
       catch(err) {
         console.log("Failed to register user");
@@ -81,9 +91,10 @@ const registerChatUser = async (email) => {
       setErrors(validationErrors);
       return;
     }
+    registerChatUser(formData);
     dispatch(registerUser(formData));
-    registerChatUser();
-    setFormData({ email: "", role: "", password: "" });
+
+    setFormData({ email: "", role: "", password: "",});
     setErrors({});
   };
 
