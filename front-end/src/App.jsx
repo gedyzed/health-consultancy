@@ -31,7 +31,7 @@ const CLIENT_ID = "279776484984-el62cf8hhv3hhovspg4b58ko1jgn5oe9.apps.googleuser
 
 function App() {
   const isAuthenticated = true; // Set to true if user is logged in
-  const userRole = "patient"; // or "doctor"
+  const userRole = "doctor"; // or "doctor"
 
   const isDoctor = isAuthenticated && userRole === "doctor";
   const isPatient = isAuthenticated && userRole === "patient";
@@ -41,7 +41,6 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Router>
           <div className="flex flex-col justify-between min-h-screen">
-
             {!isAuthenticated && <MainNavbar />}
 
             <main className="flex-grow">
@@ -58,11 +57,10 @@ function App() {
                 {isPatient && (
                   <>
                     <Route path="/dashboard" element={<PatientDashBoard />} />
-                    <Route path="/edit-profile" element={<EditProfile />} />
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/booking-success" element={<BookingSuccess />} />
                     <Route path="/patient-set-profile" element={<PatientSetProfile />} />
-                    <Route path="/chat" element={<ChatPage />} />
+                    <Route path="/chat/:id" element={<ChatPage />} />
                     <Route path="/book" element={<BookingPage />} />
                   </>
                 )}
@@ -71,8 +69,9 @@ function App() {
                 {isDoctor && (
                   <>
                     <Route path="/dashboard" element={<DoctorDashBoard />} />
-                    <Route path="/chat" element={<ChatPage />} />
-                    <Route path="/set-profile" element={<ProfilePage />} />
+                    <Route path="/chat/:id" element={<ChatPage />} />
+                    <Route path="/set-profile" element={<EditProfile />} />
+                    <Route path="/edit-profile" element={<EditProfile />} />
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/edit-profile" element={<EditProfile />} />
                   </>

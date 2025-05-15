@@ -170,7 +170,10 @@ const ProfilePage = () => {
       <button type="submit" className="p-2 w-full text-white bg-[#0078b8] border border-[#0078b8] rounded-lg hover:bg-[#00649a]">
         Set Profile
       </button>
+      
     </form>
+
+
     </div>
   );
 };

@@ -5,6 +5,7 @@ import MainHeader from "../../../components/layouts/MainHeader";
 import Navbar from "../../../components/layouts/Navbar";
 import UploadCertification from "../../UploadCertification";
 import AddProfile from "../../AddProfile";
+import { submitPatientProfile } from "../../../features/profile/patientProfileSetAPI";
 
 export default function PatientSetProfile() {
   const profile = useSelector((state) => state.patientSetProfile);
@@ -15,11 +16,12 @@ export default function PatientSetProfile() {
     dispatch(updateField({ field, value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted Profile:", profile);
-    // Add your backend submission logic here
-  };
+ 
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  dispatch(submitPatientProfile(profile));
+};
 
   return (
     <div>
