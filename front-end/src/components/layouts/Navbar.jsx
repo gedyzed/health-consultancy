@@ -1,18 +1,29 @@
 import { FaSearch } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { useSelector } from "react-redux";
+
 
 const Navbar = ({ showSearch = true }) => {
+
+  const auth = useSelector((state) => state.auth.isAuthenticated);
+  const role = useSelector((state) => state.auth.role);
+  const userId = useSelector((state) => state.auth.userId);
+  console.log(role, auth)
+  
+  if (auth && role){
+    const userId = useSelector((state) => state.auth.userId);
+  }
+  p
   return (
     <nav className="navbar bg-[#2A6F97] text-white px-4 md:px-6 ml-2 md:ml-6 rounded-box">
       <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-4">
 
         <div className="flex flex-wrap justify-around gap-4 md:gap-20 flex-grow">
           <Link to="/dashboard" className="btn btn-ghost text-white font">Dashboard</Link>
-          <Link to="/patients" className="btn btn-ghost text-white">Patient List</Link>
+          <Link to={`/chat/${userId}`} className="btn btn-ghost text-white">Chat</Link>
           <Link to="/calendar" className="btn btn-ghost text-white">Calendar</Link>
           <Link to="/help-center" className="btn btn-ghost text-white">Help</Link>
         </div>
-
 
         {showSearch && (
           <div className="relative w-full md:w-64 mt-2 md:mt-0">

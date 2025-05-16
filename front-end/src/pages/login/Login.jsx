@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { loginUser } from "../../features/auth/loginSlice";
+import { login } from "../../features/user/userApi";
+import { fetchProfileById } from '../../features/booking/bookingSliceApi';
+import { fetchPatientProfile } from '../../features/patient/patientSlice'
+import { setAuthState } from "../../features/auth/authenticated";
+
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -12,21 +16,42 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(loginUser({ email, password }))
-      .unwrap()
-      .then(() => navigate("/"))
-      .catch(() => {});
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+ 
+    const result = await dispatch(login({ email, password })).unwrap();
+    const { user } = result;
+    const { role, user_id } = user;
+
+    let profileData;
+    if (role === 'doctor') {
+      profileData = await dispatch(fetchProfileById(user_id)).unwrap();
+    } else if (role === 'patient') {
+      profileData = await dispatch(fetchPatientProfile(user_id)).unwrap();
+    }
+    dispatch(setAuthState({
+      isAuthenticated: true,
+      role,
+      userId: user_id,
+    }));
+
+    // Step 4: Navigate to home
+    navigate('/dashboard');
+  } catch (err) {
+    console.error('Login failed:', err);
+  }
+};
+
 
   const handleGoogleLoginSuccess = (response) => {
-    const token = response.credential;
-    const decoded = jwtDecode(token);
-    dispatch(loginWithGoogle({ token, decoded }))
-      .unwrap()
-      .then(() => navigate("/"))
-      .catch(() => {});
+    // const token = response.credential;
+    // const decoded = jwtDecode(token);
+    // dispatch(loginWithGoogle({ token, decoded }))
+    //   .unwrap()
+    //   .then(() => navigate("/"))
+    //   .catch(() => {});
   };
 
   return (
@@ -103,7 +128,6 @@ const Login = () => {
           </div>
         </form>
       </div>
-
       <div className="col-span-8 grid grid-cols-10 justify-center bg-white mb-5 bg-[url('src/assets/Login/images/Frame%205.png')] bg-cover bg-no-repeat bg-center">
         <div className="bg-white flex flex-col justify-center opacity-50 col-span-5 m-3 sm:m-4 md:m-6 lg:m-10 p-3 sm:p-4 md:p-6 lg:p-10">
           <div className="mb-1 sm:mb-2 text-[#023E8A] text-sm sm:text-lg md:text-base lg:text-2xl font-extrabold text-shadow-lg">

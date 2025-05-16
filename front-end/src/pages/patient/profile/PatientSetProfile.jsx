@@ -16,8 +16,6 @@ export default function PatientSetProfile() {
     dispatch(updateField({ field, value }));
   };
 
- 
-
 const handleSubmit = (e) => {
   e.preventDefault();
   dispatch(submitPatientProfile(profile));

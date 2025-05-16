@@ -51,7 +51,7 @@ const DoctorDashBoard = () => {
         </section>
 
         {/* Summary Cards */}
-        <SummaryCards />
+        {/* <SummaryCards /> */}
 
         {/* Appointments and Comments Section */}
         <div className="flex flex-col lg:flex-row gap-6 mt-8">

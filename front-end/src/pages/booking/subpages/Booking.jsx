@@ -1,8 +1,20 @@
-import data from "./Doctors";
 import Calendar from "../../../components/others/Calander";
 import { useState, createContext } from "react";
 import { useDate } from "../../../context/DateContext";
-const doctorprofile = data.doctorprofile;
+
+const doctorprofile = {
+    id: 1,
+    profile_picture: "https://via.placeholder.com/150?text=Dr+Alice",
+    name: "Dr. Alice Abebe",
+    work: "Doctor F",
+    payment: "150 ETB per session",
+    non_availabTime: {
+      "2025-05-15": [0, 2],
+      "2025-05-16": [1, 3]
+    }
+  };
+
+
 const ethiopianBanks = [
   "Abay Bank",
   "Addis International Bank",

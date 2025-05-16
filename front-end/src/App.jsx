@@ -27,15 +27,19 @@ import BookingPage from "./pages/booking/BookingPage";
 import ChatPage from "./pages/ChatPage";
 import DoctorDashBoard from "./pages/doctors/DoctorDashBoard";
 import Doctors from "./pages/booking/subpages/Doctors";
+import ProfileView from "./pages/doctors/Profile/ProfileView";
 
 //common pages
 import VideoConfig from "./pages/videos/VideoConfig";
+import { useSelector } from "react-redux";
 
 const CLIENT_ID = "279776484984-el62cf8hhv3hhovspg4b58ko1jgn5oe9.apps.googleusercontent.com";
 
 function App() {
-  const isAuthenticated = true; // Set to true if user is logged in
-  const userRole = "patient"; // or "doctor"
+
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const userRole = useSelector((state) => state.auth.role);
+  console.log(isAuthenticated, userRole)
 
   const isDoctor = isAuthenticated && userRole === "doctor";
   const isPatient = isAuthenticated && userRole === "patient";
@@ -62,13 +66,14 @@ function App() {
                 {isPatient && (
                   <>
                     <Route path="/dashboard" element={<PatientDashBoard />} />
-                    <Route path="/doctors" element={<Doctors />} />
+                    {/* <Route path="/doctors" element={<Doctors />} /> */}
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/booking-success" element={<BookingSuccess />} />
                     <Route path="/patient-set-profile" element={<PatientSetProfile />} />
                     <Route path="/chat/:id" element={<ChatPage />} />
                     <Route path="/book" element={<BookingPage />} />
                     <Route path="/video/:userId/:peerId" element={<VideoConfig />} />
+                    <Route path="/specialization/:namea/doctorsList" element={<Doctors />} />
                   </>
                 )}
 
@@ -82,6 +87,7 @@ function App() {
                     <Route path="/help-center" element={<HelpCenter />} />
                     <Route path="/edit-profile" element={<EditProfile />} />
                     <Route path="/video/:userId/:peerId" element={<VideoConfig />} />
+                    <Route path="/profile" element={<ProfileView /> } />
                   </>
                 )}
               </Routes>

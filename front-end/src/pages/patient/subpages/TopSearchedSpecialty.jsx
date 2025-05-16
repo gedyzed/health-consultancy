@@ -4,6 +4,7 @@ import nutrition from '../../../assets/patient/images/nutrition.png';
 import Orthopedic from '../../../assets/patient/images/Orthopedic.png';
 import Pediatrician from '../../../assets/patient/images/Pediatrician.png';
 import vision from '../../../assets/patient/images/vision.png';
+import { Link } from 'react-router-dom';
 
 
 const TopSearchedSpecialty = () => {
@@ -12,7 +13,7 @@ const TopSearchedSpecialty = () => {
     { title: "Dermatology", image: derma },
     { title: "Orthopedic", image: Orthopedic },
     { title: "Pediatrician", image: Pediatrician },
-    { title: "OB/GYN", image: gynecology},
+    { title: "OB_GYN", image: gynecology},
     { title: "Nutrition", image: nutrition },
     { title: "Vision", image: vision },
   ];
@@ -22,7 +23,7 @@ const TopSearchedSpecialty = () => {
       <h3 className="text-xl font-semibold mb-4">Top Searched Specialty</h3>
       <div className="flex gap-4 overflow-x-auto pb-2">
         {specialties.map((item, index) => (
-          <div key={index} className="card bg-base-100 w-48 shadow-sm flex-shrink-0">
+          <Link to={`/specialization/${item.title}/doctorsList`} key={index} className="card bg-base-100 w-48 shadow-sm flex-shrink-0">
             <figure className="px-4 pt-4">
               <img
                 src={item.image}
@@ -33,7 +34,7 @@ const TopSearchedSpecialty = () => {
             <div className="card-body items-center text-center py-4">
               <h2 className="card-title text-base">{item.title}</h2>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

@@ -10,6 +10,10 @@ import doctorChatReducer from '../features/doctorChat/doctorChatSlice';
 import patientChatReducer from  '../features/patientChat/patientChatSlice';
 import chatSlice from "../features/chat/chatSlice"
 import chatMessageReducer from "../features/chat/chatMessageSlice"
+import BookingReducer from "../features/booking/bookingSliceApi"
+import patientReducer from "../features/patient/patientSlice"
+import doctorsReducer from "../features/doctors/DoctorSlice"
+import authenticated from "../features/auth/authenticated"
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +27,10 @@ export const store = configureStore({
     // chat:doctorChatReducer,
     patientChat:patientChatReducer,
     chatState:chatSlice,
-    messages:chatMessageReducer
+    messages:chatMessageReducer,
+    booking: BookingReducer,
+    patient: patientReducer,
+    doctors: doctorsReducer,
+    auth: authenticated,
   }
 });
