@@ -37,12 +37,16 @@ const CLIENT_ID = "279776484984-el62cf8hhv3hhovspg4b58ko1jgn5oe9.apps.googleuser
 
 function App() {
 
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const userRole = useSelector((state) => state.auth.role);
-  console.log(isAuthenticated, userRole)
+  const auth = useSelector((state) => state.auth)
+  const {isAuthenticated, role, userId} = auth
 
-  const isDoctor = isAuthenticated && userRole === "doctor";
-  const isPatient = isAuthenticated && userRole === "patient";
+  console.log(useSelector((state) => state.doctor.profile))
+
+
+  const isDoctor = isAuthenticated && role === "doctor";
+  const isPatient = isAuthenticated && role === "patient";
+
+
   
 
   return (

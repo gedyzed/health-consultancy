@@ -4,9 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { login } from "../../features/user/userApi";
-import { fetchProfileById } from '../../features/booking/bookingSliceApi';
 import { fetchPatientProfile } from '../../features/patient/patientSlice'
 import { setAuthState } from "../../features/auth/authenticated";
+import { fetchProfileById } from "../../features/doctors/doctorsProfileApi";
+import { 
+  fetchDoctorClosedAppointments,
+  fetchDoctorUpcomingAppointments,
+
+ } from "../../features/appointmentBooking/AppointmentSlice";
 
 
 const Login = () => {
@@ -27,9 +32,13 @@ const handleSubmit = async (e) => {
 
     let profileData;
     if (role === 'doctor') {
-      profileData = await dispatch(fetchProfileById(user_id)).unwrap();
+      console.log(user_id)
+      dispatch(fetchProfileById(user_id));
+      dispatch(fetchDoctorUpcomingAppointments(user_id));
+      dispatch(fetchDoctorClosedAppointments(user_id))
+
     } else if (role === 'patient') {
-      profileData = await dispatch(fetchPatientProfile(user_id)).unwrap();
+      dispatch(fetchPatientProfile(user_id)).unwrap();
     }
     dispatch(setAuthState({
       isAuthenticated: true,
@@ -37,7 +46,6 @@ const handleSubmit = async (e) => {
       userId: user_id,
     }));
 
-    // Step 4: Navigate to home
     navigate('/dashboard');
   } catch (err) {
     console.error('Login failed:', err);

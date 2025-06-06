@@ -1,36 +1,22 @@
 // doctorSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchProfileById } from "../booking/bookingSliceApi";
+import { fetchProfileById } from "./doctorsProfileApi";
 
 const doctorSlice = createSlice({
   name: "doctor",
   initialState: {
     loading: false,
     error: null,
-    profile: {
-      user_id: null,
-      email: "",
-      role: "",
-      doctor: {
-        doctor_id: null,
-        fullName: "",
-        aboutMe: "",
-        yearOfExperience: 0,
-        pricing: "",
-        image: "",
-        idImage: "",
-        languages: [],
-        certificates: [],
-        educations: [],
-        specializations: [],
-        appointments: []
-      }
-    }
+    profile: {}
   },
   reducers: {
-    setFullProfile: (state, action) => {
+    setDoctorProfile: (state, action) => {
       state.profile = action.payload;
-    }
+    },
+    
+    clearDoctorProfile(state) {
+      state.doctorProfile = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -49,5 +35,5 @@ const doctorSlice = createSlice({
   }
 });
 
-export const { setFullProfile } = doctorSlice.actions;
+export const { setDoctorProfile } = doctorSlice.actions;
 export default doctorSlice.reducer;

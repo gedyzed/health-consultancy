@@ -1,5 +1,5 @@
 import { useState,  useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import AppointmentTable from '../../components/appointments/Appointment'
 import TopSearchedSpecialty from './subpages/TopSearchedSpecialty'
 import DailyHealthTips from './subpages/DailyHealthTips'
@@ -7,16 +7,17 @@ import Welcome from './subpages/Welcome'
 import MainHeader from "../../components/layouts/MainHeader"
 import Navbar from '../../components/layouts/Navbar'
 import Footer from '../../components/layouts/Footer'
-import { fetchAppointments } from '../../features/appointmentBooking/AppointmentSlice'
+import { fetchAppointmentsByPatient } from '../../features/appointmentBooking/AppointmentSlice'
 
 const PatientDashBoard = () => {
   
   const [name, setName] = useState("Tomas Abel");
   const dispatch = useDispatch();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const uses_id = useSelector((state) => state.auth.user_id)
 
   useEffect(() => {
-    dispatch(fetchAppointments());
+    dispatch(fetchAppointmentsByPatient(user_id));
   }, [dispatch]);
     
   return (

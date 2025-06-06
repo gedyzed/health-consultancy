@@ -13,7 +13,7 @@ const Navbar = ({ showSearch = true }) => {
   if (auth && role){
     const userId = useSelector((state) => state.auth.userId);
   }
-  p
+  
   return (
     <nav className="navbar bg-[#2A6F97] text-white px-4 md:px-6 ml-2 md:ml-6 rounded-box">
       <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-4">

@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:8000/api";
+const BASE_URL = import.meta.env.BASE_URL;
 
 // Async thunk to submit the doctor profile
 export const submitDoctorProfile = createAsyncThunk(
@@ -60,3 +60,20 @@ export const submitDoctorProfile = createAsyncThunk(
     }
   }
 );
+
+export const fetchProfileById = createAsyncThunk(
+  'doctor/fetchProfileById',
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/doctor/getProfileById/${id}`);
+       return response.date[0];
+      }
+     catch (error) {
+      return thunkAPI.rejectWithValue({
+        error: error.response?.data || 'Something went wrong',
+        status: error.response?.status || 500
+      });
+    }
+  }
+);
+

@@ -30,7 +30,7 @@ export const store = configureStore({
     messages:chatMessageReducer,
     booking: BookingReducer,
     patient: patientReducer,
-    doctors: doctorsReducer,
+    doctor: doctorsReducer,
     auth: authenticated,
   }
 });

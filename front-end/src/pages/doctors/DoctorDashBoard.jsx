@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Navbar from '../../components/layouts/Navbar';
 import Footer from '../../components/layouts/Footer';
@@ -10,16 +10,18 @@ import ChatBotButton from '../../components/chat/ChatBotButton';
 import ChatWindow from '../../components/chat/chatWindow';
 import MainHeader from '../../components/layouts/MainHeader';
 import Welcome from '../patient/subpages/Welcome';
-
-import { fetchAppointments } from "../../features/appointmentBooking/AppointmentSlice";
+import { fetchProfileById } from '../../features/doctors/doctorsProfileApi';
 
 const DoctorDashBoard = () => {
-  const dispatch = useDispatch();
-  const [isChatOpen, setIsChatOpen] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchAppointments());
-  }, [dispatch]);
+  const dispatch = useDispatch();
+  const profile = useSelector((state) => state.doctor.profile)
+  const name = profile?.doctor?.fullName;
+  console.log(useSelector((state) => state.appointment.appointments))
+  
+  // console.log(profile)
+  
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <div className="font-serif min-h-screen bg-white text-gray-800 flex flex-col justify-between">
@@ -31,7 +33,9 @@ const DoctorDashBoard = () => {
         <section className="relative text-center my-6 bg-blue-100 p-4 rounded-lg shadow-md h-32 flex items-center justify-center">
           <div className="flex flex-col items-center justify-center">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold drop-shadow-md">
-              Welcome back, Haile Asaye
+              {name ? `Welcome back, ${name }` :
+                          `Set Your Profile`
+                }
             </h2>
             <p className="italic text-gray-700">"Stay hydrated today!"</p>
           </div>
