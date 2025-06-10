@@ -1,8 +1,11 @@
-import data from "./Doctors";
+import { useEffect, useState } from "react";
 import Calendar from "../../../components/others/Calander";
-import { useState, createContext } from "react";
 import { useDate } from "../../../context/DateContext";
-const doctorprofile = data.doctorprofile;
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ethiopianBanks = [
   "Abay Bank",
   "Addis International Bank",
@@ -26,65 +29,151 @@ const ethiopianBanks = [
 ];
 
 const periods = {
-  1: "3:00 - 3:45",
-  2: "3:45 - 4:30",
-  3: "4:30 - 5:15",
-  4: "5:15 - 8:00",
-  5: "8:00 - 8:45",
-  6: "8:45 - 9:30",
-  7: "9:30 - 10:15",
+  1: "03:00 - 03:45",
+  2: "03:45 - 04:30",
+  3: "04:30 - 05:15",
+  4: "05:15 - 08:00",
+  5: "08:00 - 08:45",
+  6: "08:45 - 09:30",
+  7: "09:30 - 10:15",
   8: "10:15 - 11:00",
 };
 
-const occupied = new Set();
+const period_start = {
+  1: "03:00",
+  2: "03:45",
+  3: "04:30",
+  4: "05:15",
+  5: "08:00",
+  6: "08:45",
+  7: "09:30",
+  8: "10:15",
+};
 
-const Booking = () => {
+const Booking = ({doctorId}) => {
   const { selectedDate } = useDate();
   const [curr_idx, setidx] = useState(null);
   const [cardNumber, setCardNumber] = useState("");
   const [currbank, setBank] = useState(0);
-  const handleer = (idx) => {
-    const userContext = createContext();
-    setidx(idx);
-  };
-  const onSubmit = () => {
-    if (curr_idx === null) {
-      alert("Please select a time slot before booking.");
-      return;
-    }
-    if (cardNumber.trim() === "") {
-      alert("Please enter your card number.");
-      return;
-    }
-    // alert("this is time" + currbank+" this day"+selectedDate.format('DD-MM-YYYY')+cardNumber); send to back end
-  };
-  const addDay = (day) => {
-    day = day.format("YYYY-MM-DD");
-    occupied.clear();
-    if (doctorprofile["non-availabTime"][day]) {
-      doctorprofile["non-availabTime"][day].forEach((element) => {
-        occupied.add(element);
+  const [doctor, setDoctor] = useState(null);
+  const [appointments, setAppointments] = useState([]);
+  const [occupied, setOccupied] = useState(new Set());
+
+  const navigate = useNavigate()
+
+  console.log(doctorId,1999999111111111)
+  const [currSlot, setCurrSlot] = useState(null);
+  const user_id = 14;
+  const [symptoms, setSymptoms] = useState("new");
+
+  const getOccupiedSlots = (appointments, date) => {
+    const dateStr = date.format("YYYY-MM-DD");
+    const set = new Set();
+    appointments
+      .filter((a) => a.appointmentDate === dateStr)
+      .forEach((a) => {
+        const slotKey = Object.entries(period_start).find(
+          ([key, value]) => value === a.appointmentTime
+        );
+        if (slotKey) set.add(Number(slotKey[0]) - 1); // adjust index to match button index
       });
+    return set;
+  };
+
+  useEffect(() => {
+    const fetchDoctorData = async () => {
+      try {
+        const [profileRes, appointmentsRes] = await Promise.all([
+          axios.get(`${BASE_URL}/doctor/${doctorId}`),
+          axios.get(`${BASE_URL}/doctor/${doctorId}/UpcomingAppointments`),
+        ]);
+
+        const doctorData = profileRes.data.docter;
+        const upcomingAppointments = appointmentsRes.data.data;
+        setDoctor({
+          id: doctorData.doctor_id,
+          profile_picture: `${BASE_URL}/storage/${doctorData.image}`,
+          name: `Dr. ${doctorData.fullName}`,
+          work: doctorData.aboutMe,
+          payment: `${doctorData.pricing} ETB per session`,
+          pricing: doctorData.pricing,
+        });
+
+        setAppointments(upcomingAppointments);
+        console.log(upcomingAppointments,199191)
+        setOccupied(getOccupiedSlots(upcomingAppointments, selectedDate));
+      } catch (err) {
+        console.error("Error fetching doctor data:", err);
+      }
+    };
+
+    fetchDoctorData();
+  }, [selectedDate]);
+
+  const handleer = (idx) => {
+    setidx(idx);
+    setCurrSlot(idx );
+    console.log(idx,9999999)
+  };
+
+  const onSubmit = async () => {
+    
+    console.log(currSlot,1929129)
+    if (!currSlot) return alert("Please select a time slot");
+    try {
+      const dateStr = selectedDate.format("YYYY-MM-DD");
+      await axios.post(BASE_URL + `/setAppointment`, {
+        doctor_id: doctorId,
+        patient_id: user_id,
+        symptoms: symptoms,
+        appointmentDate: dateStr,
+        appointmentTime: period_start[currSlot+1],
+        price: doctor.pricing,
+        statusAppointment: "confirmed",
+      });
+      alert("Appointment booked!");
+
+
+      const res = await axios.get(
+        BASE_URL + `/doctor/${doctorId}/UpcomingAppointments`
+      );
+      setAppointments(res.data.data);
+      
+      setOccupied(getOccupiedSlots(res.data.data, selectedDate));
+
+     
+      navigate("/dashboard")
+
+    } catch (err) {
+      alert("Booking failed: " + (err.response?.data?.message || err.message));
     }
+
+    
+
+  };
+
+  const addDay = (day) => {
+    const updatedOccupied = getOccupiedSlots(appointments, day);
+    setOccupied(updatedOccupied);
   };
 
   return (
-    <>
+ <>
       <div className="md:flex justify-between p-5 px-20 font-Lora text-[black]">
-        <div className="md:basis-7/12 py-8 px-4 bg-[#E1F5F5]  rounded-lg">
+        <div className="md:basis-7/12 py-8 px-4 bg-[#E1F5F5] rounded-lg">
           <div className="">
-            <div className="flex gap-4  py-2 border-b-2  border-[#2A6F97]">
+            <div className="flex gap-4 py-2 border-b-2 border-[#2A6F97]">
               <img
-                src={doctorprofile["profile_picture"]}
+                src={doctor?.profile_picture}
                 alt="profile"
                 className="rounded-full h-10"
               />
               <div className="content-center ">
-                <h1 className="pb-1">{doctorprofile["name"]}</h1>
-                <p>{doctorprofile["work"]}</p>
+                <h1 className="pb-1">{doctor?.name}</h1>
+                <p>{doctor?.work}</p>
               </div>
             </div>
-            <div className=" mt-10 w-full ">
+            <div className="mt-10 w-full">
               <p className="text-center mb-5 text-2xl font-bold">
                 Enter Symptoms
               </p>
@@ -97,27 +186,26 @@ const Booking = () => {
             </div>
           </div>
           <div>
-            <div className="mt-10  text-2xl font-bold">Payment Method</div>
-            <div className="grid grid-cols-12 justify-around gap-2 mt-10 ">
-              <div className="col-span-8  h-40 flex flex-col rounded-2xl py-5 bg-[#D0EEEE] px-5">
-                <div className=" bg-white flex flex-col rounded-2xl justify-around h-full pl-5">
-                  {" "}
+            <div className="mt-10 text-2xl font-bold">Payment Method</div>
+            <div className="grid grid-cols-12 justify-around gap-2 mt-10">
+              <div className="col-span-8 h-40 flex flex-col rounded-2xl py-5 bg-[#D0EEEE] px-5">
+                <div className="bg-white flex flex-col rounded-2xl justify-around h-full pl-5">
                   <div>
-                    <label htmlFor="cars"> Choose Bank </label>
-                    <select name="cars" id="cars" className="ml-2">
+                    <label htmlFor="bank"> Choose Bank </label>
+                    <select
+                      name="bank"
+                      id="bank"
+                      className="ml-2"
+                      onChange={(e) => setBank(e.target.selectedIndex)}
+                    >
                       {ethiopianBanks.map((bank, index) => (
-                        <option
-                          key={index}
-                          onChange={() => setBank(index)}
-                          value={bank}
-                        >
+                        <option key={index} value={bank}>
                           {bank}
                         </option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    {" "}
                     <label htmlFor="card">Card </label>
                     <input
                       type="text"
@@ -130,26 +218,25 @@ const Booking = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex  col-span-4   justify-center items-end pt-20 px-10 ">
-                <div className="flex flex-col justify-between  h-full w-full text-center">
-                  <p>{doctorprofile["payment"]}</p>
+              <div className="flex col-span-4 justify-center items-end pt-20 px-10">
+                <div className="flex flex-col justify-between h-full w-full text-center">
+                  <p>{doctor?.payment}</p>
                   <button
                     className="px-3 h-10 bg-[#2A6F97] rounded-xl"
-                    // {}
                     onClick={onSubmit}
                   >
-                    book
+                    Book
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="md:basis-4/12 bg-[#E1F5F5]  rounded-lg flex flex-col justify-start ">
-          <div className=" scale-80 origin-top" style={{ zoom: "0.8" }}>
+
+        <div className="md:basis-4/12 bg-[#E1F5F5] rounded-lg flex flex-col justify-start">
+          <div className="scale-80 origin-top" style={{ zoom: "0.8" }}>
             <Calendar onAction={addDay} />
           </div>
-
           <div className="bg-white mx-10 h-30 overflow-auto rounded-lg p-2">
             {selectedDate ? (
               occupied.size < 8 ? (
@@ -157,9 +244,10 @@ const Booking = () => {
                   .filter(([ind]) => !occupied.has(ind - 1))
                   .map(([ind, value]) => (
                     <button
+
                       className={
                         "shadow-lg rounded-xs m-1 mx-3 px-1 " +
-                        (curr_idx == ind - 1 ? "bg-blue-400" : "bg-white")
+                        (curr_idx === ind - 1 ? "bg-blue-400" : "bg-white")
                       }
                       onClick={() => handleer(ind - 1)}
                       key={ind - 1}
@@ -168,14 +256,13 @@ const Booking = () => {
                     </button>
                   ))
               ) : (
-                <div ssName="font-bold text-center p-1">
-                  {" "}
-                  check out another day this day is fully occupied
+                <div className="font-bold text-center p-1">
+                  Check another day — fully booked!
                 </div>
               )
             ) : (
               <div className="font-bold text-center p-1">
-                Fisrt Select Day To See The Avaliable time{selectedDate}
+                First select a day to see available time
               </div>
             )}
           </div>

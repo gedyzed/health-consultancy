@@ -8,8 +8,10 @@ import React, {
   useImperativeHandle
 } from 'react';
 import AgoraRTC from 'agora-rtc-sdk-ng';
-import PLACEHOLDER_IMAGE from '../assets/Login/images/Frame 5.png';
+import PLACEHOLDER_IMAGE from '../../assets/Login/images/Frame 5.png';
 import { useNavigate } from 'react-router-dom';
+import RemoteVideo from './Remote';
+
 
 const VideoCall = forwardRef(({ channel, token }, ref) => {
   const client = useRef(AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })).current;
@@ -17,10 +19,10 @@ const VideoCall = forwardRef(({ channel, token }, ref) => {
   const [localAudioTrack, setLocalAudioTrack] = useState(null);
   const [localVideoTrack, setLocalVideoTrack] = useState(null);
   const [remoteUsers, setRemoteUsers] = useState({});
-  const [micOn, setMicOn] = useState(true);
-  const [camOn, setCamOn] = useState(true);
+  const [micOn, setMicOn] = useState(false);
+  const [camOn, setCamOn] = useState(false);
   const navigate = useNavigate();
-
+  const name = "";
   // subscribe / unsubscribe remote users...
   useEffect(() => {
     const handleUserPublished = async (user, mediaType) => {
@@ -106,9 +108,10 @@ const VideoCall = forwardRef(({ channel, token }, ref) => {
   };
 
   const mainRemoteUser = Object.values(remoteUsers)[0];
+  
 
   return (
-    <div style={{ position:'relative', width:'100%', height:'100vh', backgroundColor:'lightblue' }}>
+    <div style={{ position:'relative', width:'100%', height:'100vh', backgroundColor:'#d1cec7' }}>
       {mainRemoteUser && <RemoteVideo user={mainRemoteUser} />}
       <div
         id="local-container"
@@ -118,27 +121,35 @@ const VideoCall = forwardRef(({ channel, token }, ref) => {
           borderRadius:8, overflow:'hidden', background:'#000', zIndex:1000
         }}
       >
-        {!camOn && <img src={PLACEHOLDER_IMAGE} style={{width:'100%',height:'100%',objectFit:'cover'}} />}
+        {!camOn && <img src={"https://ui-avatars.com/api/?name="+name+"&background=0D8ABC&color=fff"} style={{width:'100%',height:'100%',objectFit:'cover'}} />}
       </div>
       <div style={{
         position:'fixed', top:16, left:'50%', transform:'translateX(-50%)',
         zIndex:1000, display:'flex', gap:8, padding:8,
-        background:'rgba(0,0,0,0.7)', borderRadius:8
+        background:'rgba(235, 238, 240, 0.7)', borderRadius:8
       }}>
         <button
           onClick={handleJoinLeave}
           style={{
             padding:'8px 16px',
-            background: joined ? '#ff4444' : '#4CAF50',
+            background: joined ? '#000000' : '#4CAF50',
             color:'white', border:'none', borderRadius:4, cursor:'pointer'
           }}
         >
           {joined ? 'Leave Call' : 'Join Call'}
         </button>
-        <button onClick={toggleMic} disabled={!joined} style={{ /*…*/ }}>
+        <button onClick={toggleMic} disabled={!joined} style={{
+            padding:'8px 16px',
+            background: joined ? '#000000' : '#4CAF50',
+            color:'white', border:'none', borderRadius:4, cursor:'pointer'
+          }}>
           {micOn ? 'Mute Mic' : 'Unmute Mic'}
         </button>
-        <button onClick={toggleCam} disabled={!joined} style={{ /*…*/ }}>
+        <button onClick={toggleCam} disabled={!joined} style={{
+            padding:'8px 16px',
+            background: joined ? '#000000' : '#4CAF50',
+            color:'white', border:'none', borderRadius:4, cursor:'pointer'
+          }}>
           {camOn ? 'Disable Camera' : 'Enable Camera'}
         </button>
       </div>
@@ -147,3 +158,4 @@ const VideoCall = forwardRef(({ channel, token }, ref) => {
 });
 
 export default VideoCall;
+

@@ -1,18 +1,47 @@
 import { FaSearch } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { fetchPatient } from "../../features/patientChat/patientChatAPI";
+import { fetchDoctor } from "../../features/doctorChat/doctorChatslice";
 
 const Navbar = ({ showSearch = true }) => {
+
+  const dispatch = useDispatch();
+  const profile = useSelector((state) => state.doctor.profile);
+  const { role, userId } = useSelector((state) => state.auth);
+  const { email } = useSelector((state) => state.patient)
+  const [username, setUsername] = useState('');
+ 
+
+  useEffect(() => {
+    const user_email = role === "patient" ? email : profile?.email
+    if (user_email) {
+      const [local, domain] = user_email.split('@');
+      setUsername(`${local}_${domain}`);
+      console.log(username)
+    }
+  }, [profile, email]);
+
+
+  useEffect(() => {
+    if (role === "patient") {
+      dispatch(fetchPatient(userId));
+    } else {
+      dispatch(fetchDoctor(userId));
+    }
+  }, [dispatch, role, userId]);
+
   return (
     <nav className="navbar bg-[#2A6F97] text-white px-4 md:px-6 ml-2 md:ml-6 rounded-box">
       <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-4">
 
         <div className="flex flex-wrap justify-around gap-4 md:gap-20 flex-grow">
           <Link to="/dashboard" className="btn btn-ghost text-white font">Dashboard</Link>
-          <Link to="/patients" className="btn btn-ghost text-white">Patient List</Link>
+          <Link to={`/chat/${email ? `alazar` : `abebe`}`} className="btn btn-ghost text-white">Chat</Link>
           <Link to="/calendar" className="btn btn-ghost text-white">Calendar</Link>
           <Link to="/help-center" className="btn btn-ghost text-white">Help</Link>
         </div>
-
 
         {showSearch && (
           <div className="relative w-full md:w-64 mt-2 md:mt-0">
@@ -32,3 +61,5 @@ const Navbar = ({ showSearch = true }) => {
 };
 
 export default Navbar;
+
+

@@ -2,23 +2,28 @@ import React, { useState } from 'react';
 import MainHeader from '../../../components/layouts/MainHeader';
 import Navbar from '../../../components/layouts/Navbar';
 import Footer from '../../../components/layouts/Footer';
-import { useDispatch } from 'react-redux';
-import { submitDoctorProfile } from '../../../features/doctors/doctorsProfileApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { submitDoctorProfile } from '../../../features/profile/doctorProfileSlice';
 
 
 const EditProfilePage = () => {
+  const user_id = useSelector((state) => state.auth.userId);
+  const dispatch = useDispatch();
 
-  const dispatch = useDispatch()
+  
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const [form, setForm] = useState({
     name: '',
     rate: '',
-    profileImage: null,
-    profileImagePreview: '',
+    profileImage: null, 
+    profileImagePreview: '', 
     experience: '',
     specialization: '',
     specializations: [],
     educationList: [],
+    degreeInput: '', 
     languages: [],
     languageInput: '',
     about: '',
@@ -26,16 +31,19 @@ const EditProfilePage = () => {
     certificationInput: '',
   });
 
-
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setForm((prev) => ({
         ...prev,
-        profileImage: {
-          file,
-          preview: URL.createObjectURL(file),
-        },
+        profileImage: file, // Store the File object directly
+        profileImagePreview: URL.createObjectURL(file), // Create a preview URL
+      }));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        profileImage: null,
+        profileImagePreview: '',
       }));
     }
   };
@@ -46,10 +54,10 @@ const EditProfilePage = () => {
   };
 
   const addSpecialization = () => {
-    if (form.specialization && !form.specializations.includes(form.specialization)) {
+    if (form.specialization.trim() && !form.specializations.includes(form.specialization.trim())) {
       setForm({
         ...form,
-        specializations: [...form.specializations, form.specialization],
+        specializations: [...form.specializations, form.specialization.trim()],
         specialization: '',
       });
     }
@@ -62,9 +70,10 @@ const EditProfilePage = () => {
   };
 
   const handleAddEducation = () => {
+    // Basic validation: expecting "Degree, Institution, Year"
     const parts = form.degreeInput.split(',').map((part) => part.trim());
 
-    if (parts.length === 3) {
+    if (parts.length === 3 && parts.every(part => part !== '')) {
       const [degree, institution, year] = parts;
 
       const newEducation = {
@@ -76,10 +85,12 @@ const EditProfilePage = () => {
       setForm((prevForm) => ({
         ...prevForm,
         educationList: [...prevForm.educationList, newEducation],
-        degreeInput: '',
+        degreeInput: '', // Clear the input field after adding
       }));
     } else {
-      alert('Please enter in the format: Degree, Institution, Year');
+      // Show custom alert instead of window.alert()
+      setAlertMessage('Please enter education in the format: Degree, Institution, Year');
+      setShowAlert(true);
     }
   };
 
@@ -90,10 +101,10 @@ const EditProfilePage = () => {
   };
 
   const addLanguage = () => {
-    if (form.languageInput && !form.languages.includes(form.languageInput)) {
+    if (form.languageInput.trim() && !form.languages.includes(form.languageInput.trim())) {
       setForm({
         ...form,
-        languages: [...form.languages, form.languageInput],
+        languages: [...form.languages, form.languageInput.trim()],
         languageInput: '',
       });
     }
@@ -107,12 +118,12 @@ const EditProfilePage = () => {
 
   const handleAddCertification = () => {
     if (
-      form.certificationInput &&
-      !form.certifications.includes(form.certificationInput)
+      form.certificationInput.trim() &&
+      !form.certifications.includes(form.certificationInput.trim())
     ) {
       setForm((prevForm) => ({
         ...prevForm,
-        certifications: [...prevForm.certifications, prevForm.certificationInput],
+        certifications: [...prevForm.certifications, prevForm.certificationInput.trim()],
         certificationInput: '',
       }));
     }
@@ -126,38 +137,62 @@ const EditProfilePage = () => {
     });
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(submitDoctorProfile({
-    form,
-    doctorId: 3, 
+    const dataToDispatch = {
+      ...form,
+      profileImage: form.profileImage instanceof File ? form.profileImage : null,
+      doctorId: user_id, 
+    };
 
-  }));
+    delete dataToDispatch.specialization; 
+    delete dataToDispatch.languageInput;
+    delete dataToDispatch.certificationInput;
+    delete dataToDispatch.degreeInput;
 
-    console.log('Submitted Profile:', form);
+    dispatch(submitDoctorProfile(dataToDispatch));
+    console.log(dataToDispatch)
+
+  
     setForm({
-    name: '',
-    rate: '',
-    profileImage: null,
-    profileImagePreview: '',
-    experience: '',
-    specialization: '',
-    specializations: [],
-    educationList: [],
-    languages: [],
-    languageInput: '',
-    about: '',
-    certifications: [],
-    certificationInput: '',
-  })
+      name: '',
+      rate: '',
+      profileImage: null,
+      profileImagePreview: '',
+      experience: '',
+      specialization: '',
+      specializations: [],
+      educationList: [],
+      degreeInput: '', 
+      languages: [],
+      languageInput: '',
+      about: '',
+      certifications: [],
+      certificationInput: '',
+    });
   };
 
   return (
     <div className="font-serif min-h-screen bg-white text-[#0078b8]">
       <MainHeader />
       <Navbar showSearch={false} />
+
+      {/* Custom Alert Modal */}
+      {showAlert && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <h3 className="text-xl font-semibold mb-4 text-red-600">Error</h3>
+            <p className="text-gray-800 mb-6">{alertMessage}</p>
+            <button
+              onClick={() => setShowAlert(false)}
+              className="bg-[#0078b8] text-white px-6 py-2 rounded-lg hover:bg-[#005a8f]"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Avatar & Edit */}
       <div className="w-full max-w-sm mx-auto flex flex-col gap-2 items-center pt-4">
@@ -175,7 +210,6 @@ const EditProfilePage = () => {
             onChange={handleProfileImageChange}
           />
         </label>
-
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-5xl mx-auto p-6 space-y-6">
@@ -238,7 +272,7 @@ const EditProfilePage = () => {
               <input
                 name="degreeInput"
                 placeholder="e.g. MD, Harvard University, 2020"
-                value={form.degreeInput}
+                value={form.degreeInput} // Ensure this is bound to state
                 onChange={(e) => setForm({ ...form, degreeInput: e.target.value })}
                 className="w-full border border-[#0078b8] rounded-2xl p-2"
               />
@@ -269,8 +303,6 @@ const EditProfilePage = () => {
               ))}
             </div>
           </div>
-
-
 
           {/* Languages */}
           <div>
@@ -334,10 +366,9 @@ const EditProfilePage = () => {
           </div>
         </div>
 
-
         {/* Submit */}
         <div className="text-center pt-6">
-          <button type="submit" className="bg-[#11618b] text-white px-6 py-2 rounded-2xl w-full">
+          <button type="submit" className="bg-[#11618b] text-white px-6 py-2 rounded-2xl w-full" >
             Update Profile
           </button>
         </div>

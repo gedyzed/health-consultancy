@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { registerUser, clearStatus } from "../../features/auth/registerSlice";
+import { useDispatch, useSelector } from "react-redux";;
 import { Link, useNavigate } from "react-router-dom";
+import { registerUser, clearStatus } from "../../features/auth/registerSlice";
 import google from "../../assets/Login/Icon/Google Icon.svg";
 import { registerAgoraUser } from "../../features/chat/chatSliceApi";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -14,8 +15,9 @@ const Register = () => {
   const [formData, setFormData] = useState({
     email: "",
     role: "",
-    password: ""
-    
+    password: "",
+    created_at:"",
+    updated_at:"",
   });
 
   const [errors, setErrors] = useState({});
@@ -58,36 +60,52 @@ const Register = () => {
 
 
 const registerChatUser = async (email) => {
-    const username = `${email.split('@')[0]}_${email.spli('@')[1]}`;
+  if (typeof email !== "string") {
+    throw new Error("Invalid email address");
+  }
 
-      try{
-        const result = await dispatch(registerAgoraUser(username))
-        const { userData } = unwrapResult(result)
+  const [local, domain] = email.split("@");
+  const username = `${local}_${domain}`;
 
-        if(userData){
-         alert("Error in registring user")
-          return; 
-        }
-      }
-      catch(err) {
-        console.log("Failed to register user");
-      } 
-  };
+  if (!username) {
+    throw new Error("Username is empty");
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    dispatch(registerUser(formData));
-    registerChatUser();
+  try {
+    const result = await dispatch(registerAgoraUser(username));
+    const { userData } = unwrapResult(result);
+   
+    console.log("Chat user registered successfully!");
+  } catch (err) {
+    console.error("registerChatUser failed:", err);
+    throw err; 
+  }
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const validationErrors = validate();
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
+
+  try {
+    // Ensure chat user registration is successful first
+    await registerChatUser(formData.email);
+
+    // Only run this if chat registration was successful
+    await dispatch(registerUser(formData));
+
+    // Clear form
     setFormData({ email: "", role: "", password: "" });
     setErrors({});
-  };
-
-  
+  } catch (error) {
+    console.error("User registration failed:", error);
+    setErrors({ general: error.message || "Registration failed" });
+  }
+};
 
   return (
     <div className="font-Lora md:grid md:grid-cols-12 my-[35px] justify-center lg:mx-[100px] md:mx-[50px] mx-[30px] sm:mx-[40px] md:gap-4 lg:gap-6">
