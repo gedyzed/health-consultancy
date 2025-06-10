@@ -14,7 +14,7 @@ const PatientDashBoard = () => {
   const [name, setName] = useState("Tomas Abel");
   const dispatch = useDispatch();
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const uses_id = useSelector((state) => state.auth.user_id)
+  const user_id = useSelector((state) => state.auth.userId)
 
   useEffect(() => {
     dispatch(fetchAppointmentsByPatient(user_id));

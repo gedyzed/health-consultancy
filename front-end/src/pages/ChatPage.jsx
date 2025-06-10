@@ -1,4 +1,3 @@
-import Chat from "./ChatD.jsx";
 import ChatApp from "./ChatApp.jsx";
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
@@ -45,21 +44,17 @@ const ChatPage = () => {
       console.log(userId)
       console.log("Please enter userId and token");
     }
+
+
+
   };
 
   useEffect(() => {
 
     const init = async () => {
-      const targetDoctor = doctors.find((doctor) => doctor.id === userId);
-      // handleLogin(targetDoctor.id, targetDoctor.token)
-
-      if (!targetDoctor){
-        console.warn("Doctor not found for Id", userId)
-        return; 
-      }
-
+  
       try{
-        const resultAction = await dispatch(getUserToken(targetDoctor.id))
+        const resultAction = await dispatch(getUserToken(userId))
         const { token } = unwrapResult(resultAction);
 
         if(!token){
@@ -69,7 +64,7 @@ const ChatPage = () => {
 
         }
         dispatch(setToken(token))
-        handleLogin(targetDoctor.id, token);
+        handleLogin(userId, token);
   
       }
       catch(err) {

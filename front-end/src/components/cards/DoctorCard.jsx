@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setId, setPp, setPayment, setNonAvailableTime, setName } from "../../features/booking/bookingSliceApi";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { unwrapResult } from "@reduxjs/toolkit"; 
+import avatar from "../../assets/avatar.svg"
 
 const DoctorCard = ({ doctor }) => {
 
@@ -22,6 +23,7 @@ const DoctorCard = ({ doctor }) => {
                   return; 
         
                 }
+                console.log(data)
                 dispatch(setNonAvailableTime(data));
               }
               catch(err) {

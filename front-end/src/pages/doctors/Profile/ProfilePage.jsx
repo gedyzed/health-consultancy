@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setDoctorProfile } from '../../../features/profile/doctorProfileSlice';
+import { submitDoctorProfile } from '../../../features/profile/doctorProfileSlice';
 import ProfileHeader from '../../../components/layouts/ProfileHeader'
+
 const ProfilePage = () => {
   const dispatch = useDispatch();
   const [form, setForm] = useState({
@@ -32,9 +33,7 @@ const ProfilePage = () => {
       graduationYear: Number(form.graduationYear),
     };
 
-    dispatch(setDoctorProfile(formattedForm));
-
-    // Simple browser alert (since no toaster)
+    dispatch(submitDoctorProfile(formattedForm));
     alert('Profile updated successfully!');
   };
 

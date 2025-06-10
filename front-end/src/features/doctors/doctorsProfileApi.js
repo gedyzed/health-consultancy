@@ -1,13 +1,15 @@
 // doctorProfileSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { useNavigate } from 'react-router-dom';
 
-const BASE_URL = import.meta.env.BASE_URL;
 
 // Async thunk to submit the doctor profile
 export const submitDoctorProfile = createAsyncThunk(
   'doctorProfile/submit',
   async ({ form, doctorId }, thunkAPI) => {
+
     try {
       const formData = new FormData();
 
@@ -17,9 +19,9 @@ export const submitDoctorProfile = createAsyncThunk(
       formData.append('yearOfExperience', form.experience);
       formData.append('pricing', form.rate);
       formData.append('image', form.profileImage);
-      formData.append('idImage', form.profileImage); // Assuming same for now
+      formData.append('idImage', form.profileImage);
 
-      // Languages
+      
       form.languages.forEach((lang, index) =>
         formData.append(`languages[${index}]`, lang)
       );
@@ -37,21 +39,18 @@ export const submitDoctorProfile = createAsyncThunk(
         formData.append(`education[${index}][endYear]`, edu.year);
       });
 
-      // Certifications
+  
       form.certifications.forEach((cert, index) =>
         formData.append(`certifications[${index}]`, cert)
       );
-
-     console.log(formData.entries)
-     console.log(formData)
-     console.log(formData.getAll)
-     console.log(formData.values)
-
       const response = await axios.post(
-        `${BASE_URL}/doctor/setDoctorProfile`,
+        `${BASE_URL}/doctor/setprofile`,
         formData
       );
 
+      const navigate = useNavigate()
+      navigate('/profile')
+      
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -66,7 +65,7 @@ export const fetchProfileById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(`${BASE_URL}/doctor/getProfileById/${id}`);
-       return response.date[0];
+       return response.data[0];
       }
      catch (error) {
       return thunkAPI.rejectWithValue({

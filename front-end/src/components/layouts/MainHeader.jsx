@@ -1,8 +1,15 @@
 import { IoIosNotifications } from "react-icons/io";
 import logo from '../../assets/home_page/icons/Logo.svg';
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import avatar from '../../assets/avatar.svg'
 
 const MainHeader = () => {
+  
+  const profile = useSelector((state) => state.doctor.profile)
+  const profileData = useSelector((state) => state.DoctorProfile.data)
+  const state = profile.doctor || profileData
+
 return (
 
 <header className="flex flex-col sm:flex-row justify-between items-center mt-4 px-4 sm:px-8 gap-4">
@@ -14,9 +21,10 @@ return (
           <div className="text-3xl text-[#2A6F97]">
             <IoIosNotifications className="pointer-cursor"/>
           </div>
-          <Link to="/profile">
-            <img 
-              className="w-10 h-10 rounded-full bg-gray-300 object-cover" 
+          <Link to={state ? `/profile` : `/set-profile`}>
+            <img
+              src={avatar}
+              className="w-10 h-10 rounded-full bg-gray-300" 
               alt="User Avatar" 
             />
           </Link> 

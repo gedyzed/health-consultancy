@@ -11,9 +11,9 @@ const TopSearchedSpecialty = () => {
 
   const specialties = [
     { title: "Dermatology", image: derma },
-    { title: "Orthopedic", image: Orthopedic },
+    { title: "Cardiology", image: Orthopedic },
     { title: "Pediatrician", image: Pediatrician },
-    { title: "OB_GYN", image: gynecology},
+    { title: "nternal Medicine", image: gynecology},
     { title: "Nutrition", image: nutrition },
     { title: "Vision", image: vision },
   ];

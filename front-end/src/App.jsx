@@ -39,15 +39,9 @@ function App() {
 
   const auth = useSelector((state) => state.auth)
   const {isAuthenticated, role, userId} = auth
-
-  console.log(useSelector((state) => state.doctor.profile))
-
-
   const isDoctor = isAuthenticated && role === "doctor";
   const isPatient = isAuthenticated && role === "patient";
 
-
-  
 
   return (
     <GoogleOAuthProvider clientId={CLIENT_ID}>
@@ -75,9 +69,9 @@ function App() {
                     <Route path="/booking-success" element={<BookingSuccess />} />
                     <Route path="/patient-set-profile" element={<PatientSetProfile />} />
                     <Route path="/chat/:id" element={<ChatPage />} />
-                    <Route path="/book" element={<BookingPage />} />
+                    <Route path="/book/:id" element={<BookingPage />} />
                     <Route path="/video/:userId/:peerId" element={<VideoConfig />} />
-                    <Route path="/specialization/:namea/doctorsList" element={<Doctors />} />
+                    <Route path="/specialization/:name/doctorsList" element={<Doctors />} />
                   </>
                 )}
 

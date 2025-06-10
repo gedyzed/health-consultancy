@@ -3,8 +3,19 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+
+ const doctors = Array.from({ length: 12 }, (_, i) => ({
+  doctor_id: `doc-${i + 1}`,    // unique ID for each doctor
+  fullName:   `Dr. Jane ${i + 1}`, // (just to differentiate in the UI)
+  title:      "Primary Care Doctor",
+  rating:     "4.6/5",
+  image:      null,    // or a placeholder URL if you have one
+  pricing:    null,    // if you plan to dispatch/set payment info
+}));
+
 const bookingSlice = createSlice({
     name: 'booking',
+
     initialState: {
         Id: "",
         pp: "",
@@ -17,8 +28,10 @@ const bookingSlice = createSlice({
         currBank: "",
         symptoms: "",
         yearOfExperience:"",
-        doctors:[],
         time:"",
+        doctors: [],
+        fetchStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+        fetchError: null
     },
 
     reducers: {
@@ -79,6 +92,21 @@ const bookingSlice = createSlice({
             state.symptoms = "";
         }
     }
+    ,
+    extraReducers: (builder) => {
+    builder
+      .addCase(fetchSpecializedDoctors.pending, (state) => {
+        state.fetchDoctorsStatus = 'loading';
+      })
+      .addCase(fetchSpecializedDoctors.fulfilled, (state, action) => {
+        state.fetchDoctorsStatus = 'succeeded';
+        state.doctors = action.payload;
+      })
+      .addCase(fetchSpecializedDoctors.rejected, (state, action) => {
+        state.fetchDoctorsStatus = 'failed';
+        state.fetchDoctorsError = action.payload;
+      });
+  }
 }); 
 
 export const {
@@ -112,6 +140,7 @@ export const fetchDoctorById = createAsyncThunk(
     }
   }
 );
+
 
 export const fetchProfileById = createAsyncThunk(
   'doctor/fetchProfileById',
@@ -149,10 +178,3 @@ export const fetchAppointmentsByDoctorId = createAsyncThunk(
     }
   }
 );
-
-
-
-
-
-
-

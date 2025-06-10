@@ -2,27 +2,41 @@ import { useState } from "react";
 import { FaArrowLeft, FaSearch, FaEnvelope } from "react-icons/fa";
 import { MdLanguage } from "react-icons/md";
 import Review from "../../../components/others/Review";
-import pp from "../../../assets/home_page/images/jane_cooper.jpg";
-import MainHeader from "../../../components/layouts/MainHeader";
+import pp from "../../../assets/avatar.svg"
 import Navbar from "../../../components/layouts/Navbar";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
 
 
 const ProfileView = () => {
 
   const navigate = useNavigate()
+  const profile = useSelector((state) => state.doctor.profile)
+  const email = profile.email
+  const {
+        fullName, 
+        languages, 
+        pricing,
+        certificates,
+        educations,
+        specializations,
+        aboutMe,
+      } = profile.doctor
+  
+      
 
-
+  const langs = languages.map(lang => lang.language) 
   const [showForm, setShowForm] = useState(false);
   const [newReviewText, setNewReviewText] = useState("");
 
-  const [doctorName] = useState("Dr. Jane Doe");
+  const [doctorName] = useState(fullName);
   const [title] = useState("Primary Care Doctor");
   const [rating] = useState("⭐ 4.8 (200 reviews)");
 
-  const [contactEmail] = useState("janedoe@gmail.com");
-  const [languages] = useState(["ENG", "AMH"]);
-  const [fee] = useState("300 ETB/session");
+  const [contactEmail] = useState(email);
+  const [fee] = useState(pricing);
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
@@ -47,23 +61,7 @@ const ProfileView = () => {
     setShowForm(false);
   };
 
-  const [specializations] = useState([
-    "Family Medicine",
-    "Mental Health & Counselling",
-    "Women's Health",
-  ]);
-
-  const [education] = useState([
-    "MD, Addis Ababa University, 2017",
-    "Diploma in Mental Health Counselling, Univ. of Michigan, 2021",
-  ]);
-
-  const [aboutText] = useState(
-    `Dr. Jane Doe is a compassionate and highly skilled primary care physician
-     with over 8 years of experience. She believes in building strong patient
-     relationships and using a holistic approach to healthcare. Fluent in English
-     and Amharic, she works to ensure every patient feels heard, supported, and informed.`
-  );
+  const [aboutText] = useState(aboutMe);
 
   const [reviews, setReviews] = useState([
     {
@@ -98,7 +96,6 @@ const ProfileView = () => {
 
   return (
     <div className="container pt-2">
-      {/* <MainHeader /> */}
       <Navbar />
 
       <div className="flex flex-col w-full p-10 px-50 gap-2">
@@ -134,7 +131,7 @@ const ProfileView = () => {
               <MdLanguage className="text-blue-500 mt-1" />
               <div>
                 <p className="font-bold text-sm">Languages Spoken:</p>
-                <p className="text-sm">{languages.join(", ")}</p>
+                <p className="text-sm">{langs.join(", ")}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -150,7 +147,7 @@ const ProfileView = () => {
             <p className="text-md font-bold mb-2">Specialization</p>
             <ul className="list-disc list-inside text-sm text-gray-700">
               {specializations.map((spec, idx) => (
-                <li key={idx}>{spec}</li>
+                <li key={idx}>{spec.name}</li>
               ))}
             </ul>
           </div>
@@ -159,8 +156,8 @@ const ProfileView = () => {
           <div className="flex-1 p-4 bg-white shadow rounded-lg">
             <p className="text-md font-bold mb-2">Education & Certifications</p>
             <ul className="list-disc list-inside text-sm text-gray-700">
-              {education.map((ed, idx) => (
-                <li key={idx}>{ed}</li>
+              {educations.map((ed, idx) => (
+                <li key={idx}>{ed.degree } { ed.fieldOfStudy }{ ed.institution}</li>
               ))}
             </ul>
           </div>
@@ -221,9 +218,9 @@ const ProfileView = () => {
         </div>
 
         <div className="flex justify-end mb-6">
-          <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
-            Book Appointment
-          </button>
+          <Link to="/edit-profile" className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
+            Edit Profile
+          </Link>
         </div>
       </div>
 

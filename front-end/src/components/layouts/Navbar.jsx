@@ -1,26 +1,42 @@
 import { FaSearch } from "react-icons/fa";
 import { Link } from 'react-router-dom';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { getUserToken } from "../../features/chat/chatSliceApi";
+import { fetchPatient } from "../../features/patientChat/patientChatAPI";
 
 
 const Navbar = ({ showSearch = true }) => {
 
-  const auth = useSelector((state) => state.auth.isAuthenticated);
-  const role = useSelector((state) => state.auth.role);
-  const userId = useSelector((state) => state.auth.userId);
-  console.log(role, auth)
-  
-  if (auth && role){
-    const userId = useSelector((state) => state.auth.userId);
-  }
-  
+  const dispatch = useDispatch()
+  const profile = useSelector((state) => state.doctor.profile)
+  const userId = useSelector((state) => state.auth.userId)
+  const [username, setUsername] = useState('');
+
+  useEffect(async () => {
+    if (profile?.email) {
+      const [local, domain] = profile.email.split('@');
+      setUsername(`${local}_${domain}`);
+    }
+
+    await fetchPatient(userId);
+    patients = useSelector((state) => state.patientChat.patients)
+    
+
+
+
+
+
+
+  }, [profile]);
+
   return (
     <nav className="navbar bg-[#2A6F97] text-white px-4 md:px-6 ml-2 md:ml-6 rounded-box">
       <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-4">
 
         <div className="flex flex-wrap justify-around gap-4 md:gap-20 flex-grow">
           <Link to="/dashboard" className="btn btn-ghost text-white font">Dashboard</Link>
-          <Link to={`/chat/${userId}`} className="btn btn-ghost text-white">Chat</Link>
+          <Link to={`/chat/${username}`} className="btn btn-ghost text-white">Chat</Link>
           <Link to="/calendar" className="btn btn-ghost text-white">Calendar</Link>
           <Link to="/help-center" className="btn btn-ghost text-white">Help</Link>
         </div>

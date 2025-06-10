@@ -9,18 +9,14 @@ import CommentsSection from '../../components/comments/CommentSection';
 import ChatBotButton from '../../components/chat/ChatBotButton';
 import ChatWindow from '../../components/chat/chatWindow';
 import MainHeader from '../../components/layouts/MainHeader';
-import Welcome from '../patient/subpages/Welcome';
-import { fetchProfileById } from '../../features/doctors/doctorsProfileApi';
 
 const DoctorDashBoard = () => {
 
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.doctor.profile)
+  console.log(profile)
   const name = profile?.doctor?.fullName;
-  console.log(useSelector((state) => state.appointment.appointments))
-  
-  // console.log(profile)
-  
+
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (

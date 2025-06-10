@@ -107,9 +107,6 @@ const handleSubmit = async (e) => {
   }
 };
 
-
-  
-
   return (
     <div className="font-Lora md:grid md:grid-cols-12 my-[35px] justify-center lg:mx-[100px] md:mx-[50px] mx-[30px] sm:mx-[40px] md:gap-4 lg:gap-6">
       {/* Form section */}
