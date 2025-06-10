@@ -9,16 +9,13 @@ export const fetchPatientProfile = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${BASE_URL}/patient/${id}`);
-      // Return only the needed data
-      const { role, email, password, patient } = response.data;
-      return { role, email, password, patient };
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-// Redux slice
 const patientSlice = createSlice({
   name: 'patient',
   initialState: {
@@ -71,6 +68,7 @@ const patientSlice = createSlice({
         state.email = action.payload.email;
         state.password = action.payload.password;
         state.patient = action.payload.patient;
+        
       })
       .addCase(fetchPatientProfile.rejected, (state, action) => {
         state.loading = false;

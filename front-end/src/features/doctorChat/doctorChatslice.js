@@ -1,15 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchDoctorMessages } from './doctorChatAPI';
 
 // Thunk for async fetching of chat messages
-export const fetchMessages = createAsyncThunk(
-  'doctorChat/fetchMessages',
-  async (doctorId, thunkAPI) => {
+export const fetchDoctor = createAsyncThunk(
+  'patientChat/fetchMessages',
+  async (pId, thunkAPI) => {
     try {
-      const messages = await fetchDoctorMessages(doctorId);
-      return messages;
+      const response = await axios.get(`${BASE_URL}/doctorList/${pId}`);
+      return response.data; 
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || 'Error fetching messages');
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -18,8 +17,6 @@ const doctorChatSlice = createSlice({
   name: 'doctorChat',
   initialState: {
     doctors: [],
-    selectedDoctor: null,
-    messages: [],
     loading: false,
     error: null,
   },
@@ -37,15 +34,15 @@ const doctorChatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMessages.pending, (state) => {
+      .addCase(fetchDoctor.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchMessages.fulfilled, (state, action) => {
-        state.messages = action.payload;
+      .addCase(fetchDoctor.fulfilled, (state, action) => {
+        state.doctors = action.payload;
         state.loading = false;
       })
-      .addCase(fetchMessages.rejected, (state, action) => {
+      .addCase(fetchDoctor.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });

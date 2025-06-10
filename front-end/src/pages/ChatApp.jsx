@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVideo, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import AgoraChat from "agora-chat";
@@ -36,6 +36,11 @@ const ChatApp = ({ chatClient }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const role = useSelector((state) => state.auth.role)
+    const doctors_ = useSelector((state) => state.doctorChat.doctors)
+    const patients = useSelector((state) => state.patientChat.patients)
+
+
 
     //user chat states 
     const messages = useSelector(state => state.messages.messages)
@@ -46,9 +51,14 @@ const ChatApp = ({ chatClient }) => {
     const logs = useSelector(state => state.chatState.logs);
     const IsLoggedIn = useSelector(state => state.chatState.IsLoggedIn);
     const [startCall, setStartCall] = useState(false);
+    const users = role === 'patient' ? patients : doctors_
 
+    
+    console.log(patients)
+    console.log()
+    console.log(users)
 
- 
+  
     const handleSendMessage = async () => {
         if (message.trim()) {
             try {

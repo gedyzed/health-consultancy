@@ -24,7 +24,7 @@ export const store = configureStore({
     register:registerReducer,
     login:loginReducer,
     doctorDashboard:doctorDashboardReducer,
-    // chat:doctorChatReducer,
+    doctorChat:doctorChatReducer,
     patientChat:patientChatReducer,
     chatState:chatSlice,
     messages:chatMessageReducer,

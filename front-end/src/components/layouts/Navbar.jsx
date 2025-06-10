@@ -2,33 +2,35 @@ import { FaSearch } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import { getUserToken } from "../../features/chat/chatSliceApi";
 import { fetchPatient } from "../../features/patientChat/patientChatAPI";
-
+import { fetchDoctor } from "../../features/doctorChat/doctorChatslice";
 
 const Navbar = ({ showSearch = true }) => {
 
-  const dispatch = useDispatch()
-  const profile = useSelector((state) => state.doctor.profile)
-  const userId = useSelector((state) => state.auth.userId)
+  const dispatch = useDispatch();
+  const profile = useSelector((state) => state.doctor.profile);
+  const { role, userId } = useSelector((state) => state.auth);
+  const { email } = useSelector((state) => state.patient)
   const [username, setUsername] = useState('');
+ 
 
-  useEffect(async () => {
-    if (profile?.email) {
-      const [local, domain] = profile.email.split('@');
+  useEffect(() => {
+    const user_email = role === "patient" ? email : profile?.email
+    if (user_email) {
+      const [local, domain] = user_email.split('@');
       setUsername(`${local}_${domain}`);
+      console.log(username)
     }
-
-    await fetchPatient(userId);
-    patients = useSelector((state) => state.patientChat.patients)
-    
+  }, [profile, email]);
 
 
-
-
-
-
-  }, [profile]);
+  useEffect(() => {
+    if (role === "patient") {
+      dispatch(fetchPatient(userId));
+    } else {
+      dispatch(fetchDoctor(userId));
+    }
+  }, [dispatch, role, userId]);
 
   return (
     <nav className="navbar bg-[#2A6F97] text-white px-4 md:px-6 ml-2 md:ml-6 rounded-box">
@@ -36,7 +38,7 @@ const Navbar = ({ showSearch = true }) => {
 
         <div className="flex flex-wrap justify-around gap-4 md:gap-20 flex-grow">
           <Link to="/dashboard" className="btn btn-ghost text-white font">Dashboard</Link>
-          <Link to={`/chat/${username}`} className="btn btn-ghost text-white">Chat</Link>
+          <Link to={`/chat/${email ? `alazar` : `abebe`}`} className="btn btn-ghost text-white">Chat</Link>
           <Link to="/calendar" className="btn btn-ghost text-white">Calendar</Link>
           <Link to="/help-center" className="btn btn-ghost text-white">Help</Link>
         </div>
@@ -59,3 +61,5 @@ const Navbar = ({ showSearch = true }) => {
 };
 
 export default Navbar;
+
+
