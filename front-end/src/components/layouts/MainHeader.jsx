@@ -21,7 +21,7 @@ return (
           <div className="text-3xl text-[#2A6F97]">
             <IoIosNotifications className="pointer-cursor"/>
           </div>
-          <Link to={state ? `/profile` : `/set-profile`}>
+          <Link to={state ? `/profile` : `/profile`}>
             <img
               src={avatar}
               className="w-10 h-10 rounded-full bg-gray-300" 

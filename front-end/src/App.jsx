@@ -28,6 +28,7 @@ import ChatPage from "./pages/ChatPage";
 import DoctorDashBoard from "./pages/doctors/DoctorDashBoard";
 import Doctors from "./pages/booking/subpages/Doctors";
 import ProfileView from "./pages/doctors/Profile/ProfileView";
+import PatientProfile from './pages/patient/profile/PatientSetProfile'
 
 //common pages
 import VideoConfig from "./pages/videos/VideoConfig";
@@ -72,6 +73,7 @@ function App() {
                     <Route path="/book/:id" element={<BookingPage />} />
                     <Route path="/video/:userId/:peerId" element={<VideoConfig />} />
                     <Route path="/specialization/:name/doctorsList" element={<Doctors />} />
+                    <Route path="/profile"  element={<PatientProfile />}/>
                   </>
                 )}
 

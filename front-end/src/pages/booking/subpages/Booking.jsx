@@ -61,9 +61,9 @@ const Booking = ({doctorId}) => {
 
   const navigate = useNavigate()
 
-  console.log(doctorId,1999999111111111)
+  
   const [currSlot, setCurrSlot] = useState(null);
-  const user_id = 14;
+  const user_id = useSelector((state) => state.auth.userId);
   const [symptoms, setSymptoms] = useState("new");
 
   const getOccupiedSlots = (appointments, date) => {

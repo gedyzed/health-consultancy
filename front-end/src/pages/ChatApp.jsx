@@ -40,9 +40,8 @@ const ChatApp = ({ chatClient }) => {
     const doctors_ = useSelector((state) => state.doctorChat.doctors)
     const patients = useSelector((state) => state.patientChat.patients)
 
+    console.log(patients)
 
-
-    //user chat states 
     const messages = useSelector(state => state.messages.messages)
     const userId = useSelector(state => state.chatState.userId);
     const peerId = useSelector(state => state.chatState.peerId)
