@@ -6,9 +6,9 @@ import avatar from '../../assets/avatar.svg'
 
 const MainHeader = () => {
   
-  const profile = useSelector((state) => state.doctor.profile)
-  const profileData = useSelector((state) => state.DoctorProfile.data)
-  const state = profile.doctor || profileData
+  const doctorProfile = useSelector((state) => state.doctor.profile)
+  const patientProfile = useSelector((state) => state.patient)
+  const state = doctorProfile.doctor || patientProfile.patient
 
 return (
 
@@ -21,7 +21,7 @@ return (
           <div className="text-3xl text-[#2A6F97]">
             <IoIosNotifications className="pointer-cursor"/>
           </div>
-          <Link to={state ? `/profile` : `/profile`}>
+          <Link to={state ? `/profile` : `/set-profile`}>
             <img
               src={avatar}
               className="w-10 h-10 rounded-full bg-gray-300" 

@@ -1,22 +1,17 @@
-// features/patientChat/patientChatSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchPatient, sendPatientMessage } from './patientChatAPI';
+import { fetchPatient } from './patientChatAPI';
 
 const patientChatSlice = createSlice({
   name: 'patientChat',
   initialState: {
-    patients:[],
+    patients: [],
     loading: false,
     error: null,
   },
   reducers: {
-    clearChat: (state) => {
-      state.messages = [];
-      state.selectedDoctor = null;
-    },
     setPatients: (state, action) => {
-      state.patients = action.payload
-    }
+      state.patients = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -30,13 +25,10 @@ const patientChatSlice = createSlice({
       })
       .addCase(fetchPatient.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to load messages';
-      })
-      .addCase(sendPatientMessage.fulfilled, (state, action) => {
-        state.messages.push(action.payload);
+        state.error = action.payload || 'Failed to fetch patient data';
       });
   },
 });
 
-export const { selectDoctorForChat, clearChat, setDoctors } = patientChatSlice.actions;
+export const { setPatients } = patientChatSlice.actions;
 export default patientChatSlice.reducer;

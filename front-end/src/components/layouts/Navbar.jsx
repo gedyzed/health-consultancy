@@ -18,8 +18,9 @@ const Navbar = ({ showSearch = true }) => {
     const user_email = role === "patient" ? email : profile?.email
     if (user_email) {
       const [local, domain] = user_email.split('@');
-      setUsername(`${local}_${domain}`);
-      console.log(username)
+      const [service, dname] = domain.split(".")
+      setUsername(`${local}_${dname}`);
+  
     }
   }, [profile, email]);
 
@@ -27,7 +28,8 @@ const Navbar = ({ showSearch = true }) => {
   useEffect(() => {
     if (role === "patient") {
       dispatch(fetchPatient(userId));
-    } else {
+
+    } else {   
       dispatch(fetchDoctor(userId));
     }
   }, [dispatch, role, userId]);
@@ -38,7 +40,7 @@ const Navbar = ({ showSearch = true }) => {
 
         <div className="flex flex-wrap justify-around gap-4 md:gap-20 flex-grow">
           <Link to="/dashboard" className="btn btn-ghost text-white font">Dashboard</Link>
-          <Link to={`/chat/${email ? `alazar` : `abebe`}`} className="btn btn-ghost text-white">Chat</Link>
+          <Link to={`/chat/${username}`} className="btn btn-ghost text-white">Chat</Link>
           <Link to="/calendar" className="btn btn-ghost text-white">Calendar</Link>
           <Link to="/help-center" className="btn btn-ghost text-white">Help</Link>
         </div>

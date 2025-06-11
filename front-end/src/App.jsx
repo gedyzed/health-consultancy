@@ -22,6 +22,7 @@ import HelpCenter from "./pages/HelpCenter";
 import BookingSuccess from "./pages/booking/BookingSuccessful";
 import PatientSetProfile from "./pages/patient/profile/PatientSetProfile";
 import BookingPage from "./pages/booking/BookingPage";
+import PatientPp from "./pages/patient/profile/PatientProfile"
 
 // Doctor Pages
 import ChatPage from "./pages/ChatPage";
@@ -73,7 +74,8 @@ function App() {
                     <Route path="/book/:id" element={<BookingPage />} />
                     <Route path="/video/:userId/:peerId" element={<VideoConfig />} />
                     <Route path="/specialization/:name/doctorsList" element={<Doctors />} />
-                    <Route path="/profile"  element={<PatientProfile />}/>
+                    <Route path="/set-profile"  element={<PatientProfile />}/>
+                    <Route path="/profile" element={<PatientPp />} />
                   </>
                 )}
 
