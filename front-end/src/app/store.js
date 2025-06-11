@@ -14,6 +14,8 @@ import BookingReducer from "../features/booking/bookingSliceApi"
 import patientReducer from "../features/patient/patientSlice"
 import doctorsReducer from "../features/doctors/DoctorSlice"
 import authenticated from "../features/auth/authenticated"
+import patientChat from '../features/patientChat/patientChatSlice'
+import doctorsChat from '../features/doctorChat/doctorChatslice'
 
 export const store = configureStore({
   reducer: {
@@ -32,5 +34,8 @@ export const store = configureStore({
     patient: patientReducer,
     doctor: doctorsReducer,
     auth: authenticated,
+    patientChat: patientChat,
+    doctorsChat: doctorsChat
+
   }
 });

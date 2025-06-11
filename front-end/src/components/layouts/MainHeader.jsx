@@ -6,9 +6,9 @@ import avatar from '../../assets/avatar.svg'
 
 const MainHeader = () => {
   
-  const profile = useSelector((state) => state.doctor.profile)
-  const profileData = useSelector((state) => state.DoctorProfile.data)
-  const state = profile.doctor || profileData
+  const doctorProfile = useSelector((state) => state.doctor.profile)
+  const patientProfile = useSelector((state) => state.patient)
+  const state = doctorProfile.doctor || patientProfile.patient
 
 return (
 

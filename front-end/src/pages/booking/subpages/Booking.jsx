@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import Calendar from "../../../components/others/Calander";
 import { useDate } from "../../../context/DateContext";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import MainHeader from "../../../components/layouts/MainHeader";
+import Navbar from "../../../components/layouts/Navbar";
 import { useNavigate } from "react-router-dom";
+import pp from "../../../assets/avatar.svg"
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -40,14 +44,14 @@ const periods = {
 };
 
 const period_start = {
-  1: "03:00",
-  2: "03:45",
-  3: "04:30",
-  4: "05:15",
-  5: "08:00",
-  6: "08:45",
-  7: "09:30",
-  8: "10:15",
+  1: "03:00:00",
+  2: "03:45:00",
+  3: "04:30:00",
+  4: "05:15:00",
+  5: "08:00:00",
+  6: "08:45:00",
+  7: "09:30:00",
+  8: "10:15:00",
 };
 
 const Booking = ({doctorId}) => {
@@ -58,27 +62,49 @@ const Booking = ({doctorId}) => {
   const [doctor, setDoctor] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [occupied, setOccupied] = useState(new Set());
-
-  const navigate = useNavigate()
-
-  console.log(doctorId,1999999111111111)
+  const navigate = useNavigate();
   const [currSlot, setCurrSlot] = useState(null);
-  const user_id = 14;
-  const [symptoms, setSymptoms] = useState("new");
+  const user_id = useSelector((state) => state.auth.userId);
 
-  const getOccupiedSlots = (appointments, date) => {
-    const dateStr = date.format("YYYY-MM-DD");
-    const set = new Set();
-    appointments
-      .filter((a) => a.appointmentDate === dateStr)
-      .forEach((a) => {
-        const slotKey = Object.entries(period_start).find(
-          ([key, value]) => value === a.appointmentTime
-        );
-        if (slotKey) set.add(Number(slotKey[0]) - 1); // adjust index to match button index
-      });
-    return set;
-  };
+  const [symptoms, setSymptoms] = useState("new");
+const getOccupiedSlots = (appointments, date) => {
+  if (!date || typeof date.format !== 'function') {
+    console.error("Invalid or null date passed to getOccupiedSlots", date);
+    return new Set();
+  }
+
+  const dateStr = date.format("YYYY-MM-DD");
+  console.log("Getting occupied slots for:", dateStr);
+  console.log("days",appointments)
+  const matchingAppointments = appointments.filter(
+    (a) => a.appointmentDate === dateStr
+  );
+
+  console.log("Matching appointments:", matchingAppointments);
+
+  const set = new Set();
+
+  matchingAppointments.forEach((a) => {
+    const slotKey = Object.entries(period_start).find(
+      ([key, value]) => value === a.appointmentTime
+    );
+    console.log("Checking time:", a.appointmentTime, "-> slotKey:", slotKey);
+    if (slotKey) {
+      set.add(Number(slotKey[0]) - 1); // adjust index to match button index
+    }
+  });
+
+  console.log("Occupied set:", set);
+  return set;
+};
+  useEffect(() => {
+  if (appointments.length && selectedDate) {
+    const occupiedSet = getOccupiedSlots(appointments, selectedDate);
+    setOccupied(occupiedSet);
+  }
+}, [appointments, selectedDate]);
+
+
 
   useEffect(() => {
     const fetchDoctorData = async () => {
@@ -100,8 +126,7 @@ const Booking = ({doctorId}) => {
         });
 
         setAppointments(upcomingAppointments);
-        console.log(upcomingAppointments,199191)
-        setOccupied(getOccupiedSlots(upcomingAppointments, selectedDate));
+
       } catch (err) {
         console.error("Error fetching doctor data:", err);
       }
@@ -115,42 +140,48 @@ const Booking = ({doctorId}) => {
     setCurrSlot(idx );
     console.log(idx,9999999)
   };
+const onSubmit = async () => {
+  if (currSlot === null) return alert("Please select a time slot");
 
-  const onSubmit = async () => {
-    
-    console.log(currSlot,1929129)
-    if (!currSlot) return alert("Please select a time slot");
-    try {
-      const dateStr = selectedDate.format("YYYY-MM-DD");
-      await axios.post(BASE_URL + `/setAppointment`, {
-        doctor_id: doctorId,
-        patient_id: user_id,
-        symptoms: symptoms,
-        appointmentDate: dateStr,
-        appointmentTime: period_start[currSlot+1],
-        price: doctor.pricing,
-        statusAppointment: "confirmed",
-      });
-      alert("Appointment booked!");
+  const now = new Date();
+  const selectedDateTime = selectedDate.toDate();
+
+  // Combine selectedDate with selected period time
+  const [hours, minutes, seconds] = period_start[currSlot + 1].split(":").map(Number);
+  selectedDateTime.setHours(hours);
+  selectedDateTime.setMinutes(minutes);
+  selectedDateTime.setSeconds(seconds);
+
+  if (selectedDateTime < now) {
+    return alert("You cannot book a past time slot.");
+  }
+
+  try {
+    const dateStr = selectedDate.format("YYYY-MM-DD");
+    await axios.post(BASE_URL + `/setAppointment`, {
+      doctor_id: doctorId,
+      patient_id: user_id,
+      symptoms: symptoms,
+      appointmentDate: dateStr,
+      appointmentTime: period_start[currSlot + 1],
+      price: doctor.pricing,
+      statusAppointment: "confirmed",
+    });
+
+    alert("Appointment booked!");
+    const res = await axios.get(
+      BASE_URL + `/doctor/${doctorId}/UpcomingAppointments`
+    );
+    setAppointments(res.data.data);
+
+    setOccupied(getOccupiedSlots(res.data.data, selectedDate));
+    navigate("/dashboard")
+  } catch (err) {
+    alert("Booking failed: " + (err.response?.data?.message || err.message));
+  }
+};
 
 
-      const res = await axios.get(
-        BASE_URL + `/doctor/${doctorId}/UpcomingAppointments`
-      );
-      setAppointments(res.data.data);
-      
-      setOccupied(getOccupiedSlots(res.data.data, selectedDate));
-
-     
-      navigate("/dashboard")
-
-    } catch (err) {
-      alert("Booking failed: " + (err.response?.data?.message || err.message));
-    }
-
-    
-
-  };
 
   const addDay = (day) => {
     const updatedOccupied = getOccupiedSlots(appointments, day);
@@ -158,13 +189,16 @@ const Booking = ({doctorId}) => {
   };
 
   return (
- <>
+ <>     
+      <MainHeader />
+      <Navbar />
+
       <div className="md:flex justify-between p-5 px-20 font-Lora text-[black]">
         <div className="md:basis-7/12 py-8 px-4 bg-[#E1F5F5] rounded-lg">
           <div className="">
             <div className="flex gap-4 py-2 border-b-2 border-[#2A6F97]">
               <img
-                src={doctor?.profile_picture}
+                src={pp}
                 alt="profile"
                 className="rounded-full h-10"
               />
@@ -241,20 +275,23 @@ const Booking = ({doctorId}) => {
             {selectedDate ? (
               occupied.size < 8 ? (
                 Object.entries(periods)
-                  .filter(([ind]) => !occupied.has(ind - 1))
-                  .map(([ind, value]) => (
-                    <button
+                  .filter(([ind]) => !occupied.has(Number(ind) - 1))
+                  .map(([ind, value]) => {
+                    const index = Number(ind) - 1;
+                    return (
+                      <button
+                        className={
+                          "shadow-lg rounded-xs m-1 mx-3 px-1 " +
+                          (curr_idx === index ? "bg-blue-400" : "bg-white")
+                        }
+                        onClick={() => handleer(index)}
+                        key={index}
+                      >
+                        {value}
+                      </button>
+                    );
+                  })
 
-                      className={
-                        "shadow-lg rounded-xs m-1 mx-3 px-1 " +
-                        (curr_idx === ind - 1 ? "bg-blue-400" : "bg-white")
-                      }
-                      onClick={() => handleer(ind - 1)}
-                      key={ind - 1}
-                    >
-                      {value}
-                    </button>
-                  ))
               ) : (
                 <div className="font-bold text-center p-1">
                   Check another day — fully booked!

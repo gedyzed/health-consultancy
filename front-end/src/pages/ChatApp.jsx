@@ -4,6 +4,7 @@ import { faVideo, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import AgoraChat from "agora-chat";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addChatMessage } from "../features/chat/chatMessageSlice";
@@ -23,26 +24,12 @@ import {
 
 
 
-
-const doctors = [
-    { id: 'abebe', name: "abebe", specialty: "Pediatrics" },
-    { id: "daniel", name: "gedion", specialty: "Pediatrics" },
-    { id: "alazar", name: "alazar", specialty: "Pediatrics" },
-];
-
-const ChatApp = ({ chatClient }) => {
+const ChatApp = ({ chatClient, chats }) => {
 
     const appKey = import.meta.env.VITE_APP_KEY;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const role = useSelector((state) => state.auth.role)
-    const doctors_ = useSelector((state) => state.doctorChat.doctors)
-    const patients = useSelector((state) => state.patientChat.patients)
-
-
-
-    //user chat states 
     const messages = useSelector(state => state.messages.messages)
     const userId = useSelector(state => state.chatState.userId);
     const peerId = useSelector(state => state.chatState.peerId)
@@ -51,12 +38,8 @@ const ChatApp = ({ chatClient }) => {
     const logs = useSelector(state => state.chatState.logs);
     const IsLoggedIn = useSelector(state => state.chatState.IsLoggedIn);
     const [startCall, setStartCall] = useState(false);
-    const users = role === 'patient' ? patients : doctors_
 
-    
-    console.log(patients)
-    console.log()
-    console.log(users)
+
 
   
     const handleSendMessage = async () => {
@@ -185,26 +168,24 @@ const formatTime = (timestamp) => {
                                 className="border-[#023E8A] border-2 h-10 w-full pl-10 rounded-lg"
                                 placeholder="Search doctors..."
                             />
-                            <img
-                                src="./search-icon.svg"
-                                className="absolute left-3 top-3 h-4 w-4"
-                                alt="search"
-                            />
+
+                        <FaSearch className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                        
                         </div>
                     </div>
 
                     <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                        {doctors.filter((doctor) => doctor.id !== userId)
-                            .map((doctor) =>
-                                doctor.id !== userId ?
+                        {chats.filter((chat) => chat.id !== userId)
+                            .map((chat) =>
+                                chat.id !== userId ?
                                     (
                                         <button
-                                            key={doctor.id}
-                                            onClick={() => handleSelectChat(doctor)}
-                                            className={`w-full p-3 rounded-lg text-left hover:bg-blue-50 transition-colors ${currentChat?.id === doctor.id ? 'bg-blue-100 border border-blue-300' : 'bg-white border border-gray-200'}`}
+                                            key={chat.id}
+                                            onClick={() => handleSelectChat(chat)}
+                                            className={`w-full p-3 rounded-lg text-left hover:bg-blue-50 transition-colors ${currentChat?.id === chat.id ? 'bg-blue-100 border border-blue-300' : 'bg-white border border-gray-200'}`}
                                         >
-                                            <div className="font-medium text-gray-900">{doctor.name}</div>
-                                            <div className="text-sm text-gray-500">{doctor.specialty}</div>
+                                            <div className="font-medium text-gray-900">{chat.name}</div>
+                                            {/* <div className="text-sm text-gray-500">{chat.specialty}</div> */}
                                         </button>
                                     ) : null)}
                     </div>
@@ -254,9 +235,9 @@ const formatTime = (timestamp) => {
                                                         {msg.user === userId ? "You" : currentChat.name}
                                                     </div>
                                                     <div>{msg.msg}</div>
-                                                    <div className="text-xs mt-1 text-right opacity-80">
+                                                    {/* <div className="text-xs mt-1 text-right opacity-80">
                                                         {msg.timestamp}
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
                                         ))}
@@ -299,5 +280,4 @@ const formatTime = (timestamp) => {
 }
 
 export default ChatApp
-
 

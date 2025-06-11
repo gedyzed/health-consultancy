@@ -4,14 +4,8 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserToken, saveMessage, } from "../features/chat/chatSliceApi";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { useState } from "react";
 
-
-
-const doctors = [
-  { id: "gedion",token: "007eJxTYHA+PYnl8wTplEkRU1IN+YxLymRFl5Y7yR2fI1xnxLXamkuBwTjVwMzQ0tDU0CLV1MQkxTzJ2NjQ2MwwxTTN3MTQxMic/75qRkMgI4OLy1UGRgZWIGZkAPHZGNJTUzLz8wDTuRqT" },
-  { id: "abebe", token: "007eJxTYBA78X/C+qn7vvA6/T/06ZXWHzvlptg18gfO7vl38WF3rsopBQbjVAMzQ0tDU0OLVFMTkxTzJGNjQ2MzwxTTNHMTQxMjc7+vKhkNgYwMzRN4mRgZWBkYgRDEV2EwSrI0SrOwMNA1SjNM0jU0TDPQTUpLNdE1MzewMDMzTEuzSLMEAKSlKVI=" },
-  { id: "alazar",token: "007eJxTYLjOcyJ98TaRX9Ey3EcFavb7nzhqetN+d9Ox2rRPRme2d+xSYDBONTAztDQ0NbRINTUxSTFPMjY2NDYzTDFNMzcxNDEyf3ZPNaMhkJGhT7CDmZGBlYERCEF8NobEnMSqxCIAgC4giw=="}
-];
 
 import {
   setUserId,
@@ -25,7 +19,11 @@ const ChatPage = () => {
   const userId = params.id;
   const chatClient = useRef(null);
   const dispatch = useDispatch();
-  const token = useSelector(state => state.chatState.token) 
+  
+  const role = useSelector((state) => state.auth.role);
+  const doctors = useSelector((state) => state.doctorChat.doctors);
+  const patients = useSelector((state) => state.patientChat.patients);
+  const [chats, setChats] = useState([])
 
   
   const handleLogin = (userId, token) => {
@@ -44,9 +42,6 @@ const ChatPage = () => {
       console.log(userId)
       console.log("Please enter userId and token");
     }
-
-
-
   };
 
   useEffect(() => {
@@ -68,17 +63,36 @@ const ChatPage = () => {
   
       }
       catch(err) {
-        // alert("Failed to fetch token or login:", err)
+        alert("Failed to fetch token or login:", err)
         console.log("Failed to fetch token or login:", err)
       } 
     }
 
      init();
     
-  }, [doctors, userId]);
+  }, [userId]);
+
+      useEffect(() => {
+      const users = doctors?.length > 0 ? doctors : patients;
+  
+      if (users && users.length > 0) {
+          const chats = users.map((user) => {
+          const [local, domain] = user.email.split('@');  
+          const [service, dname] = domain.split(".")
+          return {
+              user_id: user.user_id,
+              name: user.fullName,
+              id: `${local}_${dname}`,
+          };
+          });
+          setChats(chats)
+      }
+      }, [doctors, patients]);
+  
+
   return (
     <>
-      <ChatApp chatClient={chatClient} />
+      <ChatApp chatClient={chatClient} chats={chats}/>
     </>
   );
 };

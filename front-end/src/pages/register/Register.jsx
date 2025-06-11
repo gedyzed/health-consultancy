@@ -65,7 +65,8 @@ const registerChatUser = async (email) => {
   }
 
   const [local, domain] = email.split("@");
-  const username = `${local}_${domain}`;
+  const [service, dname] = domain.split(".")
+  const username = `${local}_${dname}`;
 
   if (!username) {
     throw new Error("Username is empty");

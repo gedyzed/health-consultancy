@@ -11,10 +11,13 @@ import { fetchAppointmentsByPatient } from '../../features/appointmentBooking/Ap
 
 const PatientDashBoard = () => {
   
-  const [name, setName] = useState("Tomas Abel");
+  // const [name, setName] = useState("Tomas Abel");
   const dispatch = useDispatch();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const user_id = useSelector((state) => state.auth.userId)
+  const patient = useSelector((state) => state.patient.patient)
+  const name = patient?.fullName
+  
 
   useEffect(() => {
     dispatch(fetchAppointmentsByPatient(user_id));

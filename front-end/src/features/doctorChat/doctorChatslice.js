@@ -1,14 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-// Thunk for async fetching of chat messages
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
+
+// Async thunk to fetch doctor list for a patient
 export const fetchDoctor = createAsyncThunk(
-  'patientChat/fetchMessages',
-  async (pId, thunkAPI) => {
+  'doctorChat/fetchDoctor',
+  async (doctorId, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/doctorList/${pId}`);
-      return response.data; 
+      const response = await axios.get(`${BASE_URL}/patientList/${doctorId}`);
+      console.log("****", response)
+      return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(
+        error.response?.data || 'Failed to fetch doctor list'
+      );
     }
   }
 );
@@ -24,13 +30,6 @@ const doctorChatSlice = createSlice({
     setDoctors: (state, action) => {
       state.doctors = action.payload;
     },
-    selectDoctor: (state, action) => {
-      state.selectedDoctor = action.payload;
-      state.messages = []; // Reset messages when switching doctors
-    },
-    addMessage: (state, action) => {
-      state.messages.push(action.payload);
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -43,11 +42,11 @@ const doctorChatSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchDoctor.rejected, (state, action) => {
-        state.error = action.payload;
+        state.error = action.payload || 'Something went wrong';
         state.loading = false;
       });
   },
 });
 
-export const { setDoctors, selectDoctor, addMessage } = doctorChatSlice.actions;
+export const { setDoctors } = doctorChatSlice.actions;
 export default doctorChatSlice.reducer;
