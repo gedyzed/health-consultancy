@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"; 
 import { useDispatch } from "react-redux";
 import { setId, setPp, setPayment, setNonAvailableTime, setName } from "../../../features/booking/bookingSliceApi";
+import pp from "../../../assets/avatar.svg"
 
 const DoctorCard = ({ doctor }) => {
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ console.log(doctor)
       <div className="card-body items-center">
         {doctor.image ? (
           <img 
-            src={doctor.image} 
+            src={pp} 
             alt={doctor.fullName} 
             className="w-16 h-16 rounded-full object-cover mb-3"
           />

@@ -5,6 +5,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import MainHeader from "../../../components/layouts/MainHeader";
 import Navbar from "../../../components/layouts/Navbar";
+import { useNavigate } from "react-router-dom";
+import pp from "../../../assets/avatar.svg"
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -60,8 +62,7 @@ const Booking = ({doctorId}) => {
   const [doctor, setDoctor] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [occupied, setOccupied] = useState(new Set());
-
-  console.log(doctorId,1999999111111111)
+  const navigate = useNavigate();
   const [currSlot, setCurrSlot] = useState(null);
   const user_id = useSelector((state) => state.auth.userId);
 
@@ -174,6 +175,7 @@ const onSubmit = async () => {
     setAppointments(res.data.data);
 
     setOccupied(getOccupiedSlots(res.data.data, selectedDate));
+    navigate("/dashboard")
   } catch (err) {
     alert("Booking failed: " + (err.response?.data?.message || err.message));
   }
@@ -196,7 +198,7 @@ const onSubmit = async () => {
           <div className="">
             <div className="flex gap-4 py-2 border-b-2 border-[#2A6F97]">
               <img
-                src={doctor?.profile_picture}
+                src={pp}
                 alt="profile"
                 className="rounded-full h-10"
               />

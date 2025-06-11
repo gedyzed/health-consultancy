@@ -1,12 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 
 export const submitDoctorProfile = createAsyncThunk(
   'doctorProfile/submit',
   async (form, thunkAPI) => {
+    const navigate = useNavigate()
+
     try {
       const formData = new FormData();
 
@@ -57,6 +61,7 @@ export const submitDoctorProfile = createAsyncThunk(
 
       console.log("+++++++++finish");
       console.log(response.status, response.data);
+      navigate("/profile")
       return response.data;
 
     } catch (error) {

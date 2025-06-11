@@ -4,6 +4,7 @@ import { faVideo, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import AgoraChat from "agora-chat";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addChatMessage } from "../features/chat/chatMessageSlice";
@@ -28,8 +29,6 @@ const ChatApp = ({ chatClient, chats }) => {
     const appKey = import.meta.env.VITE_APP_KEY;
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    console.log(chats)
 
     const messages = useSelector(state => state.messages.messages)
     const userId = useSelector(state => state.chatState.userId);
@@ -169,11 +168,9 @@ const formatTime = (timestamp) => {
                                 className="border-[#023E8A] border-2 h-10 w-full pl-10 rounded-lg"
                                 placeholder="Search doctors..."
                             />
-                            <img
-                                src="./search-icon.svg"
-                                className="absolute left-3 top-3 h-4 w-4"
-                                alt="search"
-                            />
+
+                        <FaSearch className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                        
                         </div>
                     </div>
 
