@@ -41,12 +41,11 @@ Health Consultancy is a modern web application that enables patients to connect 
 
 ### Development Tools
 - **ESLint** - Code linting
-- **Vite** - Fast development and build
 
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
-- **Node.js** (version 16 or higher)
+- **Node.js** (version 18 or higher recommended)
 - **npm** or **yarn** package manager
 
 ## 🚀 Installation
