@@ -160,14 +160,3 @@ The application requires the following environment variables:
 | `VITE_API_BASE_URL` | Backend API base URL |
 | `VITE_AGORA_APP_ID` | Agora application ID for video/audio calls |
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is part of a health consultancy platform initiative.
-
-## 📧 Contact
-
-For questions or support, please contact through the repository issues.
